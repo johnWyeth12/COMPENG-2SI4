@@ -4,21 +4,46 @@
  * (1) The constructors of 'HugeInteger' class
  * (2) The addition operation for positive integers
  */
- 
+
+import java.util.*;
 
 public class HugeInteger {
 	
 	private String remainder;
 	private int[] multiples = new int[10];
-	private int sign;
+	private int sign = 0;
 	
 	public HugeInteger(String num)
 	{
 		initializeHugeInteger(num);
 	}
 	
+	public HugeInteger(int n) throws IllegalArgumentException
+	{
+		if(n <= 1)
+		{
+			//This is the one requirement for this constructor - (n) must be larger than 1
+			throw new IllegalArgumentException("Argument must be LARGER than 1");
+		}
+		else
+		{
+			//Creates a random number with (n) digits
+			String improvisedString = Integer.toString( (int) (Math.random() * ((9 - 1) + 1) + 1) );
+			
+			for(int i = 1; i < n; i++)
+			{
+				improvisedString = improvisedString + "0";
+			}
+			System.out.println("generated string = " + improvisedString);
+			
+			//Use the same method as before to initialize the (HugeInteger)
+			initializeHugeInteger(improvisedString);
+		}
+	}
+	
 	public void initializeHugeInteger(String num)
 	{
+		//Off the bat, this.remainder is set to the number passed into the constructor
 		this.remainder = num;
 		
 		//Initializing Sign
@@ -26,7 +51,7 @@ public class HugeInteger {
 		{
 			this.sign = -1;
 			//Get rid of the sign for setting up the rest of the number
-			num = num.substring(1);
+			this.remainder = this.remainder.substring(1);
 		}
 		else {sign = 1;}
 		
@@ -48,7 +73,7 @@ public class HugeInteger {
 					}
 				}
 				
-				subtractMaxFromCurrentNumber(this.remainder);	
+				subtractStrings(this.remainder, Integer.toString(Integer.MAX_VALUE));	
 			}
 		}while(!isSmallerOrEqualThanMax(this.remainder));
 	}
@@ -56,6 +81,8 @@ public class HugeInteger {
 	public Boolean isSmallerOrEqualThanMax(String num)
 	{
 		String max_int = Integer.toString(Integer.MAX_VALUE);
+		
+		//trimming off any noise in (num)
 		num = num.trim();
 		if(max_int.length() > num.length())
 		{
@@ -88,34 +115,33 @@ public class HugeInteger {
 		}
 	}
 	
-	public void subtractMaxFromCurrentNumber(String num)
+	public void subtractStrings(String longer, String shorter)
 	{
 		String remaining = "";
 		String backwardsString = "";
 		String finalString = "";
-		String max_val = Integer.toString(Integer.MAX_VALUE);
-		int offset = num.length() - max_val.length();
+		int offset = longer.length() - shorter.length();
 		
-		for(int i = num.length() - 1; i >= offset; i--)
+		for(int i = longer.length() - 1; i >= offset; i--)
 		{
-			if(Character.getNumericValue(num.charAt(i)) < Character.getNumericValue(max_val.charAt(i - offset)))
+			if(Character.getNumericValue(longer.charAt(i)) < Character.getNumericValue(shorter.charAt(i - offset)))
 			{
 				//This is the "carry" case
 				remaining = "";
 				
 				//Adding 10, then subtracting from the bottom - then adding it to the final string
-				remaining = remaining + Integer.toString(Character.getNumericValue(num.charAt(i)) + 10 - Character.getNumericValue(max_val.charAt(i - offset)));
+				remaining = remaining + Integer.toString(Character.getNumericValue(longer.charAt(i)) + 10 - Character.getNumericValue(shorter.charAt(i - offset)));
 				backwardsString += remaining;
 				
 				//Then remove 1 from the column I just borrowed from
-				num = num.substring(0, i - 1) + Integer.toString(Character.getNumericValue(num.charAt(i - 1)) - 1) + num.substring(i);
+				longer = longer.substring(0, i - 1) + Integer.toString(Character.getNumericValue(longer.charAt(i - 1)) - 1) + longer.substring(i);
 				
 			}else
 			{
 				//Here occurs normal subtraction
 				remaining = "";
 				
-				remaining = remaining + Integer.toString(Character.getNumericValue(num.charAt(i)) - Character.getNumericValue(max_val.charAt(i - offset)));
+				remaining = remaining + Integer.toString(Character.getNumericValue(longer.charAt(i)) - Character.getNumericValue(shorter.charAt(i - offset)));
 				backwardsString += remaining;
 			}
 		}
@@ -123,7 +149,7 @@ public class HugeInteger {
 		//Add any decimal places that weren't touched
 		for(int i = offset - 1; i >= 0; i--)
 		{
-			backwardsString = backwardsString + num.charAt(i);
+			backwardsString = backwardsString + longer.charAt(i);
 		}
 		
 		//NOW have to flip the string (the logic above puts it in 'finalString' backwards)
@@ -132,8 +158,15 @@ public class HugeInteger {
 			finalString = finalString + backwardsString.charAt(i);
 		}
 		
+		//Remove any 0's at the beginning of 'finalString'
+		for(int i = 0; i < (finalString.length() - 2); i++)
+		{
+			if(finalString.charAt(i) == '0')
+			{
+				finalString = finalString.substring(i + 1);
+			}
+		}
 		this.remainder = finalString;
-		
 	}
 	
 	public String getRemainder()
@@ -145,19 +178,20 @@ public class HugeInteger {
 		{
 			System.out.print(this.multiples[i] + " ");
 		}
+		System.out.println();
 	}
 	
-	public int getSign()
-	{return this.sign;}
+	public int getSign() {return this.sign;}
 	
 	
 	public static void main(String[] args)
 	{
 		//MAX = 2147483647
 		//Ex = 4294967294	
-		HugeInteger h1 = new HugeInteger("8589934592");
+		HugeInteger h1 = new HugeInteger("-12345678911");
 		System.out.println(h1.getRemainder());
 		h1.getMultiples();
+		System.out.println(h1.getSign());
 		
 	}
 
