@@ -57,7 +57,7 @@ public class HugeInteger {
 		
 		do
 		{
-			if(isSmallerOrEqualThanMax(this.remainder))
+			if(isSmallerOrEqualThanSecondParameter(this.remainder, Integer.toString(Integer.MAX_VALUE)))
 			{
 				//Do nothing
 			}
@@ -75,13 +75,12 @@ public class HugeInteger {
 				
 				this.remainder = subtractStrings(this.remainder, Integer.toString(Integer.MAX_VALUE));	
 			}
-		}while(!isSmallerOrEqualThanMax(this.remainder));
+		}while(!isSmallerOrEqualThanSecondParameter(this.remainder, Integer.toString(Integer.MAX_VALUE)));
 	}
+
 	
-	public Boolean isSmallerOrEqualThanMax(String num)
-	{
-		String max_int = Integer.toString(Integer.MAX_VALUE);
-		
+	public static Boolean isSmallerOrEqualThanSecondParameter(String num, String max_int)
+	{		
 		//trimming off any noise in (num)
 		num = num.trim();
 		if(max_int.length() > num.length())
@@ -100,18 +99,22 @@ public class HugeInteger {
 			{
 				num_current = Integer.parseInt(String.valueOf(num.charAt(i)));
 				max_current = Integer.parseInt(String.valueOf(max_int.charAt(i)));
-				if(max_current > num_current)
+				if(max_current == num_current)
 				{
-					return true;
+					//Do nothing
+				}
+				else if(max_current < num_current)
+				{
+					return false;
 				}
 				else
 				{
-					return false;
+					return true;
 				}
 			}
 			
 			//If program gets here, (num) == Integer.MAX_VALUE
-			return true;
+			return false;
 		}
 	}
 	
@@ -175,11 +178,12 @@ public class HugeInteger {
 		return finalString;
 	}
 
-	public static String addStrings(String longer, String shorter) throws IllegalArgumentException
+	public String addStrings(String longer, String shorter) throws IllegalArgumentException
 	{
 		String remaining = "";
 		String backwardsString = "";
 		String finalString = "";
+		int carryOffset = 0;
 		int offset = longer.length() - shorter.length();
 		
 		if(offset < 0)
@@ -193,12 +197,19 @@ public class HugeInteger {
 			{
 				//The carry condition
 				remaining = "";
+				carryOffset = 0;
 				
 				remaining = remaining + Integer.toString(Character.getNumericValue(longer.charAt(i)) + Character.getNumericValue(shorter.charAt(i - offset)) - 10);
 				backwardsString += remaining;
 				
 				//Adding 1 to the next column
-				longer = longer.substring(0, i - 1) + Integer.toString(Character.getNumericValue(longer.charAt(i - 1)) + 1) + longer.substring(i);
+				//The next line makes sure the carry works properly
+				while(Integer.toString(Character.getNumericValue(longer.charAt(i - carryOffset - 1))).equals("9"))
+				{
+					longer = longer.substring(0, i - 1) + "0" + longer.substring(i);
+					carryOffset++;
+				}
+				longer = longer.substring(0, i - carryOffset - 1) + Integer.toString(Character.getNumericValue(longer.charAt(i - carryOffset - 1)) + 1) + longer.substring(i - carryOffset);
 				
 			}else
 			{
@@ -258,9 +269,9 @@ public class HugeInteger {
 		//Getting string of 'this' number
 		for(int i = 0; i < this.multiples.length - 1; i++)
 		{
-			if(this.multiples[i] > 0)
+			while(this.multiples[i] > 0)
 			{
-				if(isSmallerOrEqualThanMax(thisString))
+				if(isSmallerOrEqualThanSecondParameter(thisString, Integer.toString(Integer.MAX_VALUE)))
 				{
 					thisString = addStrings(max_int, thisString);
 				}
@@ -269,14 +280,13 @@ public class HugeInteger {
 					thisString = addStrings(thisString, max_int);
 				}
 				this.multiples[i] --;
-				
 			}
-			else if(this.multiples[i] == 0 && this.multiples[i + 1] == 0)
+			if(this.multiples[i] == 0 && this.multiples[i + 1] == 0)
 			{
 				break;
 			}
 		}
-		if(this.remainder.length() <= thisString.length())
+		if(isSmallerOrEqualThanSecondParameter(this.remainder, thisString))
 		{
 			thisString = addStrings(thisString, this.remainder);
 		}
@@ -288,35 +298,37 @@ public class HugeInteger {
 		//Getting string of 'h' number
 		for(int i = 0; i < h.multiples.length - 1; i++)
 		{
-			if(h.multiples[i] > 0)
+			while(h.multiples[i] > 0)
 			{
-				if(isSmallerOrEqualThanMax(hString))
+				if(h.multiples[i] > 0)
 				{
-					hString = addStrings(max_int, hString);
+					if(isSmallerOrEqualThanSecondParameter(hString, Integer.toString(Integer.MAX_VALUE)))
+					{
+						hString = addStrings(max_int, hString);
+					}
+					else
+					{
+						hString = addStrings(hString, max_int);
+					}
+					h.multiples[i] --;
 				}
-				else
-				{
-					hString = addStrings(hString, max_int);
-				}
-				h.multiples[i] --;
-				
 			}
-			else if(h.multiples[i] == 0 && h.multiples[i + 1] == 0)
+			if(h.multiples[i] == 0 && h.multiples[i + 1] == 0)
 			{
 				break;
 			}
 		}
-		if(h.remainder.length() <= hString.length())
-		{
-			hString = addStrings(hString, h.remainder);
-		}
-		else
+		if(isSmallerOrEqualThanSecondParameter(hString, h.remainder))
 		{
 			hString = addStrings(h.remainder, hString);
 		}
+		else
+		{
+			hString = addStrings(hString, h.remainder);
+		}
 		
 		//Adding both 'this' and 'h' strings
-		if(thisString.length() <= hString.length())
+		if(isSmallerOrEqualThanSecondParameter(thisString, hString))
 		{
 			stringOfNumbers = addStrings(hString, thisString);
 		}
@@ -335,11 +347,12 @@ public class HugeInteger {
 		//MAX = 2147483647
 		//Ex = 4294967294	
 		HugeInteger h1 = new HugeInteger("2147483647");
-		HugeInteger h2 = new HugeInteger("2147483647");
+		HugeInteger h2 = new HugeInteger("4294967294");
 		
 		HugeInteger h3 = h1.add(h2);
 		
 		System.out.println(h3.toString());
+		//System.out.println(isSmallerOrEqualThanSecondParameter("3234567899", Integer.toString(Integer.MAX_VALUE)));
 		
 	}
 
