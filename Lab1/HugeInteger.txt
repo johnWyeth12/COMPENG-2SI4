@@ -78,7 +78,6 @@ public class HugeInteger {
 		}while(!isSmallerOrEqualThanSecondParameter(this.remainder, Integer.toString(Integer.MAX_VALUE)));
 	}
 
-	
 	public static Boolean isSmallerOrEqualThanSecondParameter(String num, String max_int)
 	{		
 		//trimming off any noise in (num)
@@ -118,11 +117,12 @@ public class HugeInteger {
 		}
 	}
 	
-	public String subtractStrings(String longer, String shorter) throws IllegalArgumentException
+	public static String subtractStrings(String longer, String shorter) throws IllegalArgumentException
 	{
 		String remaining = "";
 		String backwardsString = "";
 		String finalString = "";
+		int carryOffset = 0;
 		int offset = longer.length() - shorter.length();
 		
 		if(offset < 0)
@@ -136,13 +136,21 @@ public class HugeInteger {
 			{
 				//This is the "carry" case
 				remaining = "";
+				carryOffset = 0;
 				
 				//Adding 10, then subtracting from the bottom - then adding it to the final string
 				remaining = remaining + Integer.toString(Character.getNumericValue(longer.charAt(i)) + 10 - Character.getNumericValue(shorter.charAt(i - offset)));
 				backwardsString += remaining;
 				
 				//Then remove 1 from the column I just borrowed from
-				longer = longer.substring(0, i - 1) + Integer.toString(Character.getNumericValue(longer.charAt(i - 1)) - 1) + longer.substring(i);
+				if(Integer.toString(Character.getNumericValue(longer.charAt(i - carryOffset - 1))).equals("0"))
+				{
+					longer = longer.substring(0, i - carryOffset - 2) + Integer.toString(Character.getNumericValue(longer.charAt(i - carryOffset - 2)) - 1) + "9" + longer.substring(i - carryOffset);
+				}
+				else
+				{
+					longer = longer.substring(0, i - carryOffset - 1) + Integer.toString(Character.getNumericValue(longer.charAt(i - carryOffset - 1)) - 1) + longer.substring(i - carryOffset);
+				}
 				
 			}else
 			{
@@ -243,8 +251,8 @@ public class HugeInteger {
 		}
 		return finalString;
 	}
-	
-	public String toString()
+
+ 	public String toString()
 	{
 		String totalString = "";
 		totalString += "Remainder = " + this.remainder + "\n" + "MAX_INT Multiple Array = [ ";
@@ -346,14 +354,11 @@ public class HugeInteger {
 	{
 		//MAX = 2147483647
 		//Ex = 4294967294	
-		HugeInteger h1 = new HugeInteger("2147483647");
-		HugeInteger h2 = new HugeInteger("4294967294");
 		
-		HugeInteger h3 = h1.add(h2);
+		HugeInteger h1 = new HugeInteger("12301");
+		HugeInteger h2 = new HugeInteger("198");
 		
-		System.out.println(h3.toString());
-		//System.out.println(isSmallerOrEqualThanSecondParameter("3234567899", Integer.toString(Integer.MAX_VALUE)));
-		
+		System.out.println(subtractStrings("12301", "198"));
 	}
 
 }
