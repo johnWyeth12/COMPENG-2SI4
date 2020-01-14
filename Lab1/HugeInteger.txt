@@ -20,7 +20,7 @@ public class HugeInteger {
 	
 	public HugeInteger(int n) throws IllegalArgumentException
 	{
-		if(n <= 1)
+		if(n < 1)
 		{
 			//This is the one requirement for this constructor - (n) must be larger than 1
 			throw new IllegalArgumentException("Argument must be LARGER than 1");
@@ -28,13 +28,20 @@ public class HugeInteger {
 		else
 		{
 			//Creates a random number with (n) digits - first digit can't be 0
-			String improvisedString = Integer.toString( (int) (Math.random() * ((9 - 1) + 1) + 1) );
-			
-			for(int i = 0; i < n; i++)
+			String improvisedString = "";
+			//Randomness to set the sign of the string
+			if((int) (Math.random() * ((2 - 1) + 1) + 1) == 2)
 			{
-				improvisedString = improvisedString + Integer.toString( (int) (Math.random() * (9)) );;
+				improvisedString += "-";
 			}
-			System.out.println("generated string = " + improvisedString);
+			//First number of the string CANNOT be (0)
+			improvisedString += Integer.toString( (int) (Math.random() * ((9 - 1) + 1) + 1) );
+			
+			for(int i = 1; i < n; i++)
+			{
+				improvisedString = improvisedString + Integer.toString( (int) (Math.random() * (9)) );
+			}
+			System.out.println("Generated String = " + improvisedString);
 			
 			//Use the same method as before to initialize the (HugeInteger)
 			initializeHugeInteger(improvisedString);
@@ -123,6 +130,7 @@ public class HugeInteger {
 		String backwardsString = "";
 		String finalString = "";
 		int carryOffset = 0;
+		longer = longer.trim(); shorter = shorter.trim();
 		int offset = longer.length() - shorter.length();
 		
 		if(offset < 0)
@@ -135,6 +143,7 @@ public class HugeInteger {
 			if(Character.getNumericValue(longer.charAt(i)) < Character.getNumericValue(shorter.charAt(i - offset)))
 			{
 				//This is the "carry" case
+				String temp = "";
 				remaining = "";
 				carryOffset = 0;
 				
@@ -142,14 +151,33 @@ public class HugeInteger {
 				remaining = remaining + Integer.toString(Character.getNumericValue(longer.charAt(i)) + 10 - Character.getNumericValue(shorter.charAt(i - offset)));
 				backwardsString += remaining;
 				
-				//Then remove 1 from the column I just borrowed from
-				if(Integer.toString(Character.getNumericValue(longer.charAt(i - carryOffset - 1))).equals("0"))
+				while(Integer.toString(Character.getNumericValue(longer.charAt(i - carryOffset - 1))).equals("0"))
 				{
-					longer = longer.substring(0, i - carryOffset - 2) + Integer.toString(Character.getNumericValue(longer.charAt(i - carryOffset - 2)) - 1) + "9" + longer.substring(i - carryOffset);
+					carryOffset++;
+				}
+				
+				//Checking if the index to be carried from is the FIRST index
+				if(i - carryOffset - 1 == 0)
+				{
+					temp = Integer.toString(Character.getNumericValue(longer.charAt(0)) - 1);
+					while(carryOffset > 0)
+					{
+						temp += "9";
+						carryOffset--;
+					}
+					temp += longer.substring(i);
+					longer = temp;
 				}
 				else
 				{
-					longer = longer.substring(0, i - carryOffset - 1) + Integer.toString(Character.getNumericValue(longer.charAt(i - carryOffset - 1)) - 1) + longer.substring(i - carryOffset);
+					temp = longer.substring(0, i - carryOffset - 1) + Integer.toString(Character.getNumericValue(longer.charAt(i - carryOffset - 1)) - 1);
+					while(carryOffset > 0)
+					{
+						temp += "9";
+						carryOffset--;
+					}
+					temp += longer.substring(i);
+					longer = temp;
 				}
 				
 			}else
@@ -193,6 +221,7 @@ public class HugeInteger {
 		String finalString = "";
 		int carryOffset = 0;
 		int offset = longer.length() - shorter.length();
+		longer = longer.trim(); shorter = shorter.trim();
 		
 		if(offset < 0)
 		{
@@ -353,12 +382,13 @@ public class HugeInteger {
 	public static void main(String[] args)
 	{
 		//MAX = 2147483647
-		//Ex = 4294967294	
+		//Ex = 4294967294
 		
-		HugeInteger h1 = new HugeInteger("12301");
-		HugeInteger h2 = new HugeInteger("198");
+		HugeInteger h1 = new HugeInteger("1002");
+		HugeInteger h2 = new HugeInteger("9");
 		
-		System.out.println(subtractStrings("12301", "198"));
+		HugeInteger h3 = h1.add(h2);
+		System.out.println(h3.toString());
 	}
 
 }

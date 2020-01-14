@@ -1,0 +1,49 @@
+
+public class test_HugeInteger {
+
+	public static void main(String[] args) {
+		
+		//Constructor with parameter being string
+		HugeInteger h1 = new HugeInteger("123456789");
+		System.out.println("Constructor with '123456789' as the string \n" + "----------------------------------------------");
+		System.out.println(h1.toString() + "\n\n");
+		
+		//Constructor with parameter being string
+		HugeInteger h2 = new HugeInteger("-102938");
+		System.out.println("Constructor with '-102938' as the string \n" + "----------------------------------------------");
+		System.out.println(h2.toString() + "\n\n");
+		
+		//Constructor with parameter being string
+		HugeInteger h3 = new HugeInteger("0");
+		System.out.println("Constructor with '0' as the string \n" + "----------------------------------------------");
+		System.out.println(h3.toString() + "\n\n");
+		
+		//Constructor with parameter being int
+		HugeInteger h4 = new HugeInteger(1);
+		System.out.println("Constructor with parameter integer 1 \n" + "----------------------------------------------");
+		System.out.println(h4.toString() + "\n\n");
+		
+		//Constructor with parameter being int
+		HugeInteger h5 = new HugeInteger(10);
+		System.out.println("Constructor with parameter integer 9 \n" + "----------------------------------------------");
+		System.out.println(h5.toString() + "\n\n");
+		
+		//Constructor with INVALID input (n = -1)
+		try {
+			HugeInteger h6 = new HugeInteger(-1);
+		}catch(IllegalArgumentException e)
+		{
+			System.out.println("Constructor with parameter integer -1 \n" + "----------------------------------------------");
+			System.out.println("Illegal Argument Exception Caught | n must be greater than 0 \n\n");
+		}
+		
+		//Using add(HugeInteger h) to add positive integers
+		System.out.println("Adding '19861' and '39009768' using add() - should be 39029629‬ \n" + "----------------------------------------------");
+		HugeInteger h7 = new HugeInteger("19861");
+		HugeInteger h8 = new HugeInteger("39009768");
+		HugeInteger h9 = h7.add(h8);
+		System.out.println(h9.toString());
+
+	}
+
+}
