@@ -5,7 +5,7 @@ public class test_HugeInteger {
 		
 		//Constructor with parameter being string
 		HugeInteger h1 = new HugeInteger("12345678911");
-		System.out.println("Constructor with '123456789' as the string \n" + "----------------------------------------------");
+		System.out.println("Constructor with '12345678911' as the string \n" + "----------------------------------------------");
 		System.out.println(h1.toString() + "\n\n");
 		
 		//Constructor with parameter being string
@@ -52,7 +52,14 @@ public class test_HugeInteger {
 		HugeInteger h7 = new HugeInteger("19861");
 		HugeInteger h8 = new HugeInteger("39009768");
 		HugeInteger h9 = h7.add(h8);
-		System.out.println(h9.toString());
+		System.out.println(h9.toString() + "\n\n");
+		
+		//Using add(HugeInteger h) to add positive numbers - the result is large enough to impact the 'MAX_INT multiples array'
+		System.out.println("Adding '3900976867' and '39009768' using add() - should be 3939986635 (larger than Integer.MAX_INT so multiples array is used) \n" + "----------------------------------------------");
+		HugeInteger h19 = new HugeInteger("3900976867");
+		HugeInteger h20 = new HugeInteger("39009768");
+		HugeInteger h21 = h19.add(h20);
+		System.out.println(h21.toString() + "\n\n");
 
 	}
 
