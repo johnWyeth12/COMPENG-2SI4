@@ -15,6 +15,11 @@ public class HugeInteger {
 	
 	public HugeInteger(String num)
 	{
+		//If the parameter is an empty string - set the string to (0)
+		if(num.length() == 0)
+		{
+			num = "0";
+		}
 		initializeHugeInteger(num);
 	}
 	
@@ -98,6 +103,7 @@ public class HugeInteger {
 				}
 				
 				this.remainder = subtractStrings(this.remainder, Integer.toString(Integer.MAX_VALUE));	
+				//System.out.println(this.remainder);
 			}
 		}while(!isSmallerOrEqualThanSecondParameter(this.remainder, Integer.toString(Integer.MAX_VALUE)));
 	}
@@ -230,7 +236,7 @@ public class HugeInteger {
 		String remaining = "";
 		String backwardsString = "";
 		String finalString = "";
-		int carryOffset = 0;
+		int carryOffset = 0, specialCarry = 0;
 		int offset = longer.length() - shorter.length();
 		longer = longer.trim(); shorter = shorter.trim();
 		
@@ -241,35 +247,49 @@ public class HugeInteger {
 		
 		for(int i = longer.length() - 1; i >= offset; i--)
 		{
-			if(Character.getNumericValue(longer.charAt(i)) + Character.getNumericValue(shorter.charAt(i - offset)) >= 10)
+			if(Character.getNumericValue(longer.charAt(i + specialCarry)) + Character.getNumericValue(shorter.charAt(i - offset)) >= 10)
 			{
 				//The carry condition
 				remaining = "";
 				carryOffset = 0;
+				specialCarry = 0;
 				
 				remaining = remaining + Integer.toString(Character.getNumericValue(longer.charAt(i)) + Character.getNumericValue(shorter.charAt(i - offset)) - 10);
 				backwardsString += remaining;
 				
 				//Adding 1 to the next column
 				//The next line makes sure the carry works properly
-				while(Integer.toString(Character.getNumericValue(longer.charAt(i - carryOffset - 1))).equals("9"))
+				while((i - carryOffset != 0) && Integer.toString(Character.getNumericValue(longer.charAt(i - carryOffset - 1))).equals("9"))
 				{
-					longer = longer.substring(0, i - 1) + "0" + longer.substring(i);
+
+					//This case is for when the carry happens on the Least Sig Digit
+					longer = longer.substring(0, i - carryOffset) + addZerosMethod(carryOffset + 1);
 					carryOffset++;
+					
 				}
-				longer = longer.substring(0, i - carryOffset - 1) + Integer.toString(Character.getNumericValue(longer.charAt(i - carryOffset - 1)) + 1) + longer.substring(i - carryOffset);
+				
+				if(i - carryOffset == 0)
+				{
+					longer = "10" + longer.substring(1);
+					specialCarry++;
+					//longer = longer.substring(0, i - carryOffset - 1) + Integer.toString(Character.getNumericValue(longer.charAt(i - carryOffset - 1)) + 1) + longer.substring(i - carryOffset);
+				}
+				else
+				{
+					longer = longer.substring(0, i - 1) + Integer.toString(Character.getNumericValue(longer.charAt(i - carryOffset - 1)) + 1) + longer.substring(i);
+				}
 				
 			}else
 			{
 				remaining = "";
 				
-				remaining = remaining + Integer.toString(Character.getNumericValue(longer.charAt(i)) + Character.getNumericValue(shorter.charAt(i - offset)));
+				remaining = remaining + Integer.toString(Character.getNumericValue(longer.charAt(i + specialCarry)) + Character.getNumericValue(shorter.charAt(i - offset)));
 				backwardsString += remaining;
 			}
 		}
 		
 		//Add any decimal places that weren't touched
-		for(int i = offset - 1; i >= 0; i--)
+		for(int i = offset - 1 + specialCarry; i >= 0; i--)
 		{
 			backwardsString = backwardsString + longer.charAt(i);
 		}
@@ -410,10 +430,20 @@ public class HugeInteger {
 		return false;
 	}
 	
+	public static String addZerosMethod(int c)
+	{
+		String toReturn = "";
+		for(int i = 0; i < c; i++)
+		{
+			toReturn += "0";
+		}
+		return toReturn;
+	}
+	
 	public static void main(String[] args)
 	{
 		//MAX = 2147483647
-		HugeInteger h1 = new HugeInteger("00012");
+		HugeInteger h1 = new HugeInteger("");
 		System.out.println(h1.toString());
 	}
 

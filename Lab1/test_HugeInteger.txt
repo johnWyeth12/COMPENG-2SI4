@@ -24,8 +24,8 @@ public class test_HugeInteger {
 		}
 		
 		//Constructor with parameter being string
-		HugeInteger h3 = new HugeInteger("0");
-		System.out.println("Constructor with '0' as the string \n" + "----------------------------------------------");
+		HugeInteger h3 = new HugeInteger("");
+		System.out.println("Constructor with empty string as the input \n" + "----------------------------------------------");
 		System.out.println(h3.toString() + "\n\n");
 		
 		//Constructor with parameter being int
@@ -34,30 +34,23 @@ public class test_HugeInteger {
 		System.out.println(h4.toString() + "\n\n");
 		
 		//Constructor with parameter being int
-		HugeInteger h5 = new HugeInteger(10);
-		System.out.println("Constructor with parameter integer 9 \n" + "----------------------------------------------");
+		HugeInteger h5 = new HugeInteger(12);
+		System.out.println("Constructor with parameter integer 10 \n" + "----------------------------------------------");
 		System.out.println(h5.toString() + "\n\n");
 		
 		//Constructor with INVALID input (n = -1)
 		try {
-			HugeInteger h6 = new HugeInteger(-1);
+			HugeInteger h6 = new HugeInteger(0);
 		}catch(IllegalArgumentException e)
 		{
-			System.out.println("Constructor with parameter integer -1 \n" + "----------------------------------------------");
+			System.out.println("Constructor with parameter integer 0 \n" + "----------------------------------------------");
 			System.out.println("Illegal Argument Exception Caught | n must be greater than 0 \n\n");
 		}
 		
-		//Using add(HugeInteger h) to add positive integers
-		System.out.println("Adding '19861' and '39009768' using add() - should be 39029629‬ \n" + "----------------------------------------------");
-		HugeInteger h7 = new HugeInteger("19861");
-		HugeInteger h8 = new HugeInteger("39009768");
-		HugeInteger h9 = h7.add(h8);
-		System.out.println(h9.toString() + "\n\n");
-		
 		//Using add(HugeInteger h) to add positive numbers - the result is large enough to impact the 'MAX_INT multiples array'
 		System.out.println("Adding '3900976867' and '39009768' using add() - should be 3939986635 (larger than Integer.MAX_INT so multiples array is used) \n" + "----------------------------------------------");
-		HugeInteger h19 = new HugeInteger("3900976867");
-		HugeInteger h20 = new HugeInteger("39009768");
+		HugeInteger h19 = new HugeInteger("0");
+		HugeInteger h20 = new HugeInteger("0");
 		HugeInteger h21 = h19.add(h20);
 		System.out.println(h21.toString() + "\n\n");
 
