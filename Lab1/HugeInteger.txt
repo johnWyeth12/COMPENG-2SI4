@@ -59,8 +59,25 @@ public class HugeInteger {
 			this.sign = -1;
 			//Get rid of the sign for setting up the rest of the number
 			this.remainder = this.remainder.substring(1);
+			
+			//Check that all characters in the string are allowed
+			if(isThereIllegalChar(this.remainder))
+			{
+				throw new IllegalArgumentException("Illegal Character");
+			}
+			//Remove any leading zeros
+			this.remainder = removeLeadingZeros(this.remainder);
 		}
-		else {sign = 1;}
+		else 
+		{
+			sign = 1;
+			if(isThereIllegalChar(this.remainder))
+			{
+				throw new IllegalArgumentException("Illegal Character");
+			}
+			//Remove any leading zeros
+			this.remainder = removeLeadingZeros(this.remainder);
+		}
 		
 		do
 		{
@@ -203,14 +220,8 @@ public class HugeInteger {
 		}
 		
 		//Remove any 0's at the beginning of 'finalString'
-		int finalLength = finalString.length();
-		for(int i = 0; i < finalLength - 1; i++)
-		{
-			if(finalString.charAt(0) == '0')
-			{
-				finalString = finalString.substring(1);
-			}
-		}
+		finalString = removeLeadingZeros(finalString);
+		
 		return finalString;
 	}
 
@@ -270,14 +281,8 @@ public class HugeInteger {
 		}
 		
 		//Remove any 0's at the beginning of 'finalString'
-		int finalLength = finalString.length();
-		for(int i = 0; i < finalLength - 1; i++)
-		{
-			if(finalString.charAt(0) == '0')
-			{
-				finalString = finalString.substring(1);
-			}
-		}
+		finalString = removeLeadingZeros(finalString);
+		
 		return finalString;
 	}
 
@@ -378,17 +383,38 @@ public class HugeInteger {
 		HugeInteger finalObject = new HugeInteger(stringOfNumbers);
 		return finalObject;
 	}
+	public static String removeLeadingZeros(String s)
+	{
+		int finalLength = s.length() - 1;
+		for(int i = 0; i < finalLength; i++)
+		{
+			if(s.charAt(0) == '0')
+			{
+				s = s.substring(1);
+			}
+		}
+		return s;
+	}
 
+	public static Boolean isThereIllegalChar(String s)
+	{
+		for(int i = 0; i < s.length(); i++)
+		{
+			//Checking if the character at index (i) is recognized as a digit
+			if(!Character.isDigit(s.charAt(i)))
+			{
+				return true;
+			}
+		}
+		//If the program gets here, there are no (non-digit) characters in the String s
+		return false;
+	}
+	
 	public static void main(String[] args)
 	{
 		//MAX = 2147483647
-		//Ex = 4294967294
-		
-		HugeInteger h1 = new HugeInteger("1002");
-		HugeInteger h2 = new HugeInteger("9");
-		
-		HugeInteger h3 = h1.add(h2);
-		System.out.println(h3.toString());
+		HugeInteger h1 = new HugeInteger("00012");
+		System.out.println(h1.toString());
 	}
 
 }

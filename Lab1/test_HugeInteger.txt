@@ -4,14 +4,24 @@ public class test_HugeInteger {
 	public static void main(String[] args) {
 		
 		//Constructor with parameter being string
-		HugeInteger h1 = new HugeInteger("123456789");
+		HugeInteger h1 = new HugeInteger("12345678911");
 		System.out.println("Constructor with '123456789' as the string \n" + "----------------------------------------------");
 		System.out.println(h1.toString() + "\n\n");
 		
 		//Constructor with parameter being string
-		HugeInteger h2 = new HugeInteger("-102938");
-		System.out.println("Constructor with '-102938' as the string \n" + "----------------------------------------------");
+		HugeInteger h2 = new HugeInteger("-000000102938");
+		System.out.println("Constructor with '-000000102938' as the string \n" + "----------------------------------------------");
 		System.out.println(h2.toString() + "\n\n");
+		
+		//Constructor with parameter being string
+		System.out.println("Constructor with '12&%56' as the string \n" + "----------------------------------------------");
+		try
+		{
+			HugeInteger h11 = new HugeInteger("12&%56");
+		}catch(Exception IllegalArgumentException)
+		{
+			System.out.println("Illegal Argument Exception Caught | n cannot have non-numbers in it\n\n");
+		}
 		
 		//Constructor with parameter being string
 		HugeInteger h3 = new HugeInteger("0");
