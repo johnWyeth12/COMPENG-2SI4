@@ -296,11 +296,12 @@ public class HugeInteger {
 	
 	public HugeInteger add(HugeInteger h)
 	{
-		String stringOfNumbers = "0";
+		String stringOfNumbers = "";
 		
 		//Adding both 'this' and 'h' strings
 		if(isSmallerOrEqualThanSecondParameter(this.remainder, h.remainder))
 		{
+			//'this' is smaller
 			if(h.sign == 1 && this.sign == 1)
 			{
 				stringOfNumbers = addStrings(h.remainder, this.remainder);
@@ -318,6 +319,7 @@ public class HugeInteger {
 		}
 		else
 		{
+			//'h' is smaller
 			if(h.sign == 1 && this.sign == 1)
 			{
 				stringOfNumbers = addStrings(this.remainder, h.remainder);
@@ -337,6 +339,50 @@ public class HugeInteger {
 		HugeInteger finalObject = new HugeInteger(stringOfNumbers);
 		return finalObject;
 	}
+	
+	public HugeInteger subtract(HugeInteger h)
+	{
+		String stringOfNumbers = "";
+		
+		if(isSmallerOrEqualThanSecondParameter(this.remainder, h.remainder))
+		{
+			//'h' is larger
+			if(h.sign == 1 && this.sign == 1)
+			{
+				stringOfNumbers = "-" + subtractStrings(h.remainder, this.remainder);
+			} else if(h.sign == 1 && this.sign == -1)
+			{
+				stringOfNumbers = "-" + addStrings(h.remainder, this.remainder);
+			} else if(h.sign == -1 && this.sign == 1)
+			{
+				stringOfNumbers = addStrings(h.remainder, this.remainder);
+			} else
+			{
+				stringOfNumbers = subtractStrings(h.remainder, this.remainder);
+			}
+		}
+		else
+		{
+			//'this' is larger
+			if(h.sign == 1 && this.sign == 1)
+			{
+				stringOfNumbers = subtractStrings(this.remainder, h.remainder);
+			} else if(h.sign == 1 && this.sign == -1)
+			{
+				stringOfNumbers = "-" + addStrings(this.remainder, h.remainder);
+			} else if(h.sign == -1 && this.sign == 1)
+			{
+				stringOfNumbers = addStrings(this.remainder, h.remainder);
+			} else
+			{
+				stringOfNumbers = "-" + subtractStrings(this.remainder, h.remainder);
+			}
+		}
+		HugeInteger newObject = new HugeInteger(stringOfNumbers);
+		
+		return newObject;
+	}
+	
 	public static String removeLeadingZeros(String s)
 	{
 		int finalLength = s.length() - 1;
@@ -377,10 +423,10 @@ public class HugeInteger {
 	public static void main(String[] args)
 	{
 		//MAX = 2147483647
-		HugeInteger h1 = new HugeInteger("999");
-		HugeInteger h2 = new HugeInteger("999");
+		HugeInteger h1 = new HugeInteger("-1000");
+		HugeInteger h2 = new HugeInteger("-123");
 		
-		HugeInteger h3 = h1.add(h2);
+		HugeInteger h3 = h1.subtract(h2);
 		
 		System.out.println(h3.toString());
 	}
