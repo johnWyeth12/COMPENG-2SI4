@@ -10,15 +10,14 @@ import java.util.*;
 public class HugeInteger {
 	
 	private String remainder;
-	private int[] multiples = new int[10];
 	private int sign = 0;
 	
-	public HugeInteger(String num)
+	public HugeInteger(String num) throws IllegalArgumentException
 	{
 		//If the parameter is an empty string - set the string to (0)
 		if(num.length() == 0)
 		{
-			num = "0";
+			throw new IllegalArgumentException("Cannot Have Empty String");
 		}
 		initializeHugeInteger(num);
 	}
@@ -83,29 +82,6 @@ public class HugeInteger {
 			//Remove any leading zeros
 			this.remainder = removeLeadingZeros(this.remainder);
 		}
-		
-		do
-		{
-			if(isSmallerOrEqualThanSecondParameter(this.remainder, Integer.toString(Integer.MAX_VALUE)))
-			{
-				//Do nothing
-			}
-			else
-			{
-				//Get to the earliest available element
-				for(int index = 0; index < multiples.length - 1; index++)
-				{
-					if(this.multiples[index] <= Integer.MAX_VALUE && this.multiples[index + 1] == 0)
-					{
-						this.multiples[index]++;
-						break;
-					}
-				}
-				
-				this.remainder = subtractStrings(this.remainder, Integer.toString(Integer.MAX_VALUE));	
-				//System.out.println(this.remainder);
-			}
-		}while(!isSmallerOrEqualThanSecondParameter(this.remainder, Integer.toString(Integer.MAX_VALUE)));
 	}
 
 	public static Boolean isSmallerOrEqualThanSecondParameter(String num, String max_int)
@@ -308,95 +284,53 @@ public class HugeInteger {
 
  	public String toString()
 	{
-		String totalString = "";
-		totalString += "Remainder = " + this.remainder + "\n" + "MAX_INT Multiple Array = [ ";
-		
-		for(int i = 0; i < this.multiples.length; i++)
+		if(this.sign == -1)
 		{
-			totalString += this.multiples[i] + " ";
+			return ("-" + this.remainder);
 		}
-		
-		totalString += "]\n" + "Sign = " + this.sign;
-		
-		return totalString;
+		else
+		{
+			return (this.remainder);
+		}
 	}
 	
 	public HugeInteger add(HugeInteger h)
 	{
 		String stringOfNumbers = "0";
-		String thisString = "0";
-		String hString = "0";
-		String max_int = Integer.toString(Integer.MAX_VALUE);
-		
-		//Getting string of 'this' number
-		for(int i = 0; i < this.multiples.length - 1; i++)
-		{
-			while(this.multiples[i] > 0)
-			{
-				if(isSmallerOrEqualThanSecondParameter(thisString, Integer.toString(Integer.MAX_VALUE)))
-				{
-					thisString = addStrings(max_int, thisString);
-				}
-				else
-				{
-					thisString = addStrings(thisString, max_int);
-				}
-				this.multiples[i] --;
-			}
-			if(this.multiples[i] == 0 && this.multiples[i + 1] == 0)
-			{
-				break;
-			}
-		}
-		if(isSmallerOrEqualThanSecondParameter(this.remainder, thisString))
-		{
-			thisString = addStrings(thisString, this.remainder);
-		}
-		else
-		{
-			thisString = addStrings(this.remainder, thisString);
-		}
-		
-		//Getting string of 'h' number
-		for(int i = 0; i < h.multiples.length - 1; i++)
-		{
-			while(h.multiples[i] > 0)
-			{
-				if(h.multiples[i] > 0)
-				{
-					if(isSmallerOrEqualThanSecondParameter(hString, Integer.toString(Integer.MAX_VALUE)))
-					{
-						hString = addStrings(max_int, hString);
-					}
-					else
-					{
-						hString = addStrings(hString, max_int);
-					}
-					h.multiples[i] --;
-				}
-			}
-			if(h.multiples[i] == 0 && h.multiples[i + 1] == 0)
-			{
-				break;
-			}
-		}
-		if(isSmallerOrEqualThanSecondParameter(hString, h.remainder))
-		{
-			hString = addStrings(h.remainder, hString);
-		}
-		else
-		{
-			hString = addStrings(hString, h.remainder);
-		}
 		
 		//Adding both 'this' and 'h' strings
-		if(isSmallerOrEqualThanSecondParameter(thisString, hString))
+		if(isSmallerOrEqualThanSecondParameter(this.remainder, h.remainder))
 		{
-			stringOfNumbers = addStrings(hString, thisString);
+			if(h.sign == 1 && this.sign == 1)
+			{
+				stringOfNumbers = addStrings(h.remainder, this.remainder);
+			} else if(h.sign == 1 && this.sign == -1)
+			{
+				stringOfNumbers = subtractStrings(h.remainder, this.remainder);
+			} else if(h.sign == -1 && this.sign == 1)
+			{
+				stringOfNumbers = "-" + subtractStrings(h.remainder, this.remainder);
+			} else
+			{
+				stringOfNumbers = "-" + addStrings(h.remainder, this.remainder);
+			}
+			
 		}
 		else
 		{
-			stringOfNumbers = addStrings(thisString, hString);
+			if(h.sign == 1 && this.sign == 1)
+			{
+				stringOfNumbers = addStrings(this.remainder, h.remainder);
+			} else if(h.sign == 1 && this.sign == -1)
+			{
+				stringOfNumbers = "-" + subtractStrings(this.remainder, h.remainder);
+			} else if(h.sign == -1 && this.sign == 1)
+			{
+				stringOfNumbers = subtractStrings(this.remainder, h.remainder);
+			} else
+			{
+				stringOfNumbers = "-" + addStrings(this.remainder, h.remainder);
+			}
 		}
 		
 		//Making the HugeInteger objects to be returned
@@ -443,8 +377,12 @@ public class HugeInteger {
 	public static void main(String[] args)
 	{
 		//MAX = 2147483647
-		HugeInteger h1 = new HugeInteger("");
-		System.out.println(h1.toString());
+		HugeInteger h1 = new HugeInteger("999");
+		HugeInteger h2 = new HugeInteger("999");
+		
+		HugeInteger h3 = h1.add(h2);
+		
+		System.out.println(h3.toString());
 	}
 
 }
