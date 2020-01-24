@@ -390,12 +390,7 @@ public class HugeInteger {
 	
 	public HugeInteger multiply(HugeInteger h)
 	{
-		String toReturn = "", toAdd = this.remainder;
-		if( (this.sign != h.sign) ) 
-		{
-			toReturn += "-";
-		}
-		
+		String toReturn = "", toAdd = this.remainder;		
 		HugeInteger returningObject = new HugeInteger(toReturn + "0");
 		
 		for(int i = 0; !h.remainder.equals("0");)
@@ -418,6 +413,11 @@ public class HugeInteger {
 			 {
 				 h.remainder = h.subtractStrings("1", h.remainder); 
 			 }
+		}
+		//Adding a check if the product ends up being negative
+		if(this.sign != h.sign)
+		{
+			returningObject.sign = -1;
 		}
 		
 		return returningObject;
@@ -497,10 +497,10 @@ public class HugeInteger {
 	public static void main(String[] args)
 	{
 		//MAX = 2147483647
-		HugeInteger h1 = new HugeInteger("-1000");
-		HugeInteger h2 = new HugeInteger("-999");
-		
-		System.out.println(h1.compareTo(h2));
+		HugeInteger h1 = new HugeInteger("-99999");
+		HugeInteger h2 = new HugeInteger("2");
+		HugeInteger h3 = h1.multiply(h2);
+		System.out.println(h3.toString());
 	}
 
 }
