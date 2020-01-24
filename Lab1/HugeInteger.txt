@@ -229,6 +229,7 @@ public class HugeInteger {
 		{
 			if(Character.getNumericValue(longer.charAt(i + specialCarry)) + Character.getNumericValue(shorter.charAt(i - offset)) >= 10)
 			{
+				int tempCarry = 1;
 				//The carry condition
 				remaining = "";
 				
@@ -237,13 +238,12 @@ public class HugeInteger {
 				
 				//Adding 1 to the next column
 				//The next line makes sure the carry works properly
-				while((i - carryOffset > 0) && Integer.toString(Character.getNumericValue(longer.charAt(i - carryOffset))).equals("9"))
+				while((i - carryOffset > 0) && Integer.toString(Character.getNumericValue(longer.charAt(i - carryOffset - tempCarry))).equals("9"))
 				{
-
+					tempCarry = 0;
 					//This case is for when the carry happens on the Least Sig Digit
 					longer = longer.substring(0, i - carryOffset) + addZerosMethod(longer.length() - i + carryOffset);
 					carryOffset++;
-					
 				}
 				
 				if(i - carryOffset == 0)
@@ -257,12 +257,13 @@ public class HugeInteger {
 				}
 				else
 				{
-					longer = longer.substring(0, i - carryOffset) + Integer.toString(Character.getNumericValue(longer.charAt(i - carryOffset)) + 1) + longer.substring(i - carryOffset + 1);
+					longer = longer.substring(0, i - carryOffset - tempCarry) + Integer.toString(Character.getNumericValue(longer.charAt(i - carryOffset - tempCarry)) + 1) + longer.substring(i - carryOffset - tempCarry + 1);
 				}
 				
 			}else
 			{
 				remaining = "";
+				carryOffset = 0;
 				
 				remaining = remaining + Integer.toString(Character.getNumericValue(longer.charAt(i + specialCarry)) + Character.getNumericValue(shorter.charAt(i - offset)));
 				backwardsString += remaining;
@@ -390,34 +391,43 @@ public class HugeInteger {
 	
 	public HugeInteger multiply(HugeInteger h)
 	{
-		String toReturn = "", toAdd = this.remainder;		
-		HugeInteger returningObject = new HugeInteger(toReturn + "0");
-		
-		for(int i = 0; !h.remainder.equals("0");)
+		String toReturn = "0";
+		HugeInteger returningObject = new HugeInteger(toReturn);
+		if(this.remainder.equals("0") || h.remainder.equals("0"))
 		{
-			 if(isSmallerOrEqualThanSecondParameter(toAdd, returningObject.remainder))
-			 {
-				 returningObject.remainder = returningObject.addStrings(returningObject.remainder, toAdd);
-			 }
-			 else
-			 {
-				 returningObject.remainder = returningObject.addStrings(toAdd, returningObject.remainder);
-			 }
-			 
-			 //Subtracting '1' from 'h'.remainder
-			 if(isSmallerOrEqualThanSecondParameter("1", h.remainder))
-			 {
-				 h.remainder = h.subtractStrings(h.remainder, "1");
-			 }
-			 else
-			 {
-				 h.remainder = h.subtractStrings("1", h.remainder); 
-			 }
+			//Do nothing - just keep the 'toReturn' string at (0) and return the object
 		}
-		//Adding a check if the product ends up being negative
-		if(this.sign != h.sign)
+		else
 		{
-			returningObject.sign = -1;
+			String toAdd = this.remainder;
+			
+			for(int i = 0; !h.remainder.equals("0");)
+			{
+				 if(isSmallerOrEqualThanSecondParameter(toAdd, returningObject.remainder))
+				 {
+					 returningObject.remainder = returningObject.addStrings(returningObject.remainder, toAdd);
+				 }
+				 else
+				 {
+					 returningObject.remainder = returningObject.addStrings(toAdd, returningObject.remainder);
+				 }
+				 
+				 //Subtracting '1' from 'h'.remainder
+				 if(isSmallerOrEqualThanSecondParameter("1", h.remainder))
+				 {
+					 h.remainder = h.subtractStrings(h.remainder, "1");
+				 }
+				 else
+				 {
+					 h.remainder = h.subtractStrings("1", h.remainder); 
+				 }
+				 System.out.println(returningObject.remainder + "     " + h.remainder);
+			}
+			//Adding a check if the product ends up being negative
+			if(this.sign != h.sign)
+			{
+				returningObject.sign = -1;
+			}
 		}
 		
 		return returningObject;
@@ -497,8 +507,8 @@ public class HugeInteger {
 	public static void main(String[] args)
 	{
 		//MAX = 2147483647
-		HugeInteger h1 = new HugeInteger("-99999");
-		HugeInteger h2 = new HugeInteger("2");
+		HugeInteger h1 = new HugeInteger("1234");
+		HugeInteger h2 = new HugeInteger("1234");
 		HugeInteger h3 = h1.multiply(h2);
 		System.out.println(h3.toString());
 	}
