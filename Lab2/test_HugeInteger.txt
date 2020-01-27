@@ -50,9 +50,16 @@ public class test_HugeInteger {
 		HugeInteger h15 = new HugeInteger("144");
 		HugeInteger h16 = new HugeInteger("123456");
 		HugeInteger h17 = h15.multiply(h16);
-		System.out.println("Testing multiply() with pos and neg numbers");
+		System.out.println("Testing multiply() with pos numbers");
 		System.out.println("---------------------------------------------");
 		System.out.println(h17.toString() + "\n\n");
+		
+		HugeInteger h18 = new HugeInteger("-1234567818");
+		HugeInteger h19 = new HugeInteger("126");
+		HugeInteger h20 = h18.multiply(h19);
+		System.out.println("Testing multiply() with pos and neg numbers");
+		System.out.println("---------------------------------------------");
+		System.out.println(h20.toString() + "\n\n");
 		
 	}
 
