@@ -1,0 +1,516 @@
+
+/*
+ * For Lab 1, demonstrate the following:
+ * (1) The constructors of 'HugeInteger' class
+ * (2) The addition operation for positive integers
+ */
+
+import java.util.*;
+
+public class HugeInteger {
+	
+	private String remainder;
+	private int sign = 0;
+	
+	public HugeInteger(String num) throws IllegalArgumentException
+	{
+		//If the parameter is an empty string - set the string to (0)
+		if(num.length() == 0)
+		{
+			throw new IllegalArgumentException("Cannot Have Empty String");
+		}
+		else if(num.equals("-0"))
+		{
+			num = "0";
+		}
+		initializeHugeInteger(num);
+	}
+	
+	public HugeInteger(int n) throws IllegalArgumentException
+	{
+		if(n < 1)
+		{
+			//This is the one requirement for this constructor - (n) must be larger than 1
+			throw new IllegalArgumentException("Argument must be LARGER than 1");
+		}
+		else
+		{
+			//Creates a random number with (n) digits - first digit can't be 0
+			String improvisedString = "";
+			//Randomness to set the sign of the string
+			if((int) (Math.random() * ((2 - 1) + 1) + 1) == 2)
+			{
+				improvisedString += "-";
+			}
+			//First number of the string CANNOT be (0)
+			improvisedString += Integer.toString( (int) (Math.random() * ((9 - 1) + 1) + 1) );
+			
+			for(int i = 1; i < n; i++)
+			{
+				improvisedString = improvisedString + Integer.toString( (int) (Math.random() * (9)) );
+			}
+			System.out.println("Generated String = " + improvisedString);
+			
+			//Use the same method as before to initialize the (HugeInteger)
+			initializeHugeInteger(improvisedString);
+		}
+	}
+	
+	public void initializeHugeInteger(String num)
+	{
+		//Off the bat, this.remainder is set to the number passed into the constructor
+		this.remainder = num;
+		
+		//Initializing Sign
+		if(num.charAt(0) == '-')
+		{
+			this.sign = -1;
+			//Get rid of the sign for setting up the rest of the number
+			this.remainder = this.remainder.substring(1);
+			
+			//Check that all characters in the string are allowed
+			if(isThereIllegalChar(this.remainder))
+			{
+				throw new IllegalArgumentException("Illegal Character");
+			}
+			//Remove any leading zeros
+			this.remainder = removeLeadingZeros(this.remainder);
+		}
+		else 
+		{
+			sign = 1;
+			if(isThereIllegalChar(this.remainder))
+			{
+				throw new IllegalArgumentException("Illegal Character");
+			}
+			//Remove any leading zeros
+			this.remainder = removeLeadingZeros(this.remainder);
+		}
+	}
+
+	public static Boolean isSmallerOrEqualThanSecondParameter(String num, String max_int)
+	{		
+		//trimming off any noise in (num)
+		num = num.trim();
+		if(max_int.length() > num.length())
+		{
+			return true;
+		}
+		else if(max_int.length() < num.length())
+		{
+			return false;
+		}else
+		{
+			//If the sizes are equal, check one by one
+			int num_current;
+			int max_current;
+			for(int i = 0; i < max_int.length(); i++)
+			{
+				num_current = Integer.parseInt(String.valueOf(num.charAt(i)));
+				max_current = Integer.parseInt(String.valueOf(max_int.charAt(i)));
+				if(max_current == num_current)
+				{
+					//Do nothing
+				}
+				else if(max_current < num_current)
+				{
+					return false;
+				}
+				else
+				{
+					return true;
+				}
+			}
+			
+			//If program gets here, (num) == Integer.MAX_VALUE
+			return false;
+		}
+	}
+	
+	public String subtractStrings(String longer, String shorter) throws IllegalArgumentException
+	{
+		String remaining = "";
+		String backwardsString = "";
+		String finalString = "";
+		int carryOffset = 0;
+		longer = longer.trim(); shorter = shorter.trim();
+		int offset = longer.length() - shorter.length();
+		
+		if(offset < 0)
+		{
+			throw new IllegalArgumentException("Wrong Order Of Parameters");
+		}
+		
+		for(int i = longer.length() - 1; i >= offset; i--)
+		{
+			if(Character.getNumericValue(longer.charAt(i)) < Character.getNumericValue(shorter.charAt(i - offset)))
+			{
+				//This is the "carry" case
+				String temp = "";
+				remaining = "";
+				carryOffset = 0;
+				
+				//Adding 10, then subtracting from the bottom - then adding it to the final string
+				remaining = remaining + Integer.toString(Character.getNumericValue(longer.charAt(i)) + 10 - Character.getNumericValue(shorter.charAt(i - offset)));
+				backwardsString += remaining;
+				
+				while(Integer.toString(Character.getNumericValue(longer.charAt(i - carryOffset - 1))).equals("0"))
+				{
+					carryOffset++;
+				}
+				
+				//Checking if the index to be carried from is the FIRST index
+				if(i - carryOffset - 1 == 0)
+				{
+					temp = Integer.toString(Character.getNumericValue(longer.charAt(0)) - 1);
+					while(carryOffset > 0)
+					{
+						temp += "9";
+						carryOffset--;
+					}
+					temp += longer.substring(i);
+					longer = temp;
+				}
+				else
+				{
+					temp = longer.substring(0, i - carryOffset - 1) + Integer.toString(Character.getNumericValue(longer.charAt(i - carryOffset - 1)) - 1);
+					while(carryOffset > 0)
+					{
+						temp += "9";
+						carryOffset--;
+					}
+					temp += longer.substring(i);
+					longer = temp;
+				}
+				
+			}else
+			{
+				//Here occurs normal subtraction
+				remaining = "";
+				
+				remaining = remaining + Integer.toString(Character.getNumericValue(longer.charAt(i)) - Character.getNumericValue(shorter.charAt(i - offset)));
+				backwardsString += remaining;
+			}
+		}
+		
+		//Add any decimal places that weren't touched
+		for(int i = offset - 1; i >= 0; i--)
+		{
+			backwardsString = backwardsString + longer.charAt(i);
+		}
+		
+		//NOW have to flip the string (the logic above puts it in 'finalString' backwards)
+		for(int i = backwardsString.length() - 1; i >= 0; i--)
+		{
+			finalString = finalString + backwardsString.charAt(i);
+		}
+		
+		//Remove any 0's at the beginning of 'finalString'
+		finalString = removeLeadingZeros(finalString);
+		
+		return finalString;
+	}
+
+	public String addStrings(String longer, String shorter) throws IllegalArgumentException
+	{
+		String remaining = "";
+		String backwardsString = "";
+		String finalString = "";
+		int carryOffset = 0, specialCarry = 0;
+		int offset = longer.length() - shorter.length();
+		longer = longer.trim(); shorter = shorter.trim();
+		
+		if(offset < 0)
+		{
+			throw new IllegalArgumentException("Wrong Order Of Parameters");
+		}
+		
+		for(int i = longer.length() - 1; i >= offset; i--)
+		{
+			if(Character.getNumericValue(longer.charAt(i + specialCarry)) + Character.getNumericValue(shorter.charAt(i - offset)) >= 10)
+			{
+				int tempCarry = 1;
+				//The carry condition
+				remaining = "";
+				
+				remaining = remaining + Integer.toString(Character.getNumericValue(longer.charAt(i)) + Character.getNumericValue(shorter.charAt(i - offset)) - 10);
+				backwardsString += remaining;
+				
+				//Adding 1 to the next column
+				//The next line makes sure the carry works properly
+				while((i - carryOffset > 0) && Integer.toString(Character.getNumericValue(longer.charAt(i - carryOffset - tempCarry))).equals("9"))
+				{
+					tempCarry = 0;
+					//This case is for when the carry happens on the Least Sig Digit
+					longer = longer.substring(0, i - carryOffset) + addZerosMethod(longer.length() - i + carryOffset);
+					carryOffset++;
+				}
+				
+				if(i - carryOffset == 0)
+				{
+					if(Character.getNumericValue(longer.charAt(0)) + 1 == 10)
+					{
+						specialCarry++;
+					}
+					longer = Integer.toString(Character.getNumericValue(longer.charAt(0)) + 1) + longer.substring(1);
+					//longer = longer.substring(0, i - carryOffset - 1) + Integer.toString(Character.getNumericValue(longer.charAt(i - carryOffset - 1)) + 1) + longer.substring(i - carryOffset);
+				}
+				else
+				{
+					longer = longer.substring(0, i - carryOffset - tempCarry) + Integer.toString(Character.getNumericValue(longer.charAt(i - carryOffset - tempCarry)) + 1) + longer.substring(i - carryOffset - tempCarry + 1);
+				}
+				
+			}else
+			{
+				remaining = "";
+				carryOffset = 0;
+				
+				remaining = remaining + Integer.toString(Character.getNumericValue(longer.charAt(i + specialCarry)) + Character.getNumericValue(shorter.charAt(i - offset)));
+				backwardsString += remaining;
+			}
+		}
+		
+		//Add any decimal places that weren't touched
+		for(int i = offset + specialCarry - 1; i >= 0; i--)
+		{
+			backwardsString = backwardsString + longer.charAt(i);
+		}
+		
+		//NOW have to flip the string (the logic above puts it in 'finalString' backwards)
+		for(int i = backwardsString.length() - 1; i >= 0; i--)
+		{
+			finalString = finalString + backwardsString.charAt(i);
+		}
+		
+		//Remove any 0's at the beginning of 'finalString'
+		finalString = removeLeadingZeros(finalString);
+		
+		return finalString;
+	}
+
+ 	public String toString()
+	{
+		if(this.sign == -1)
+		{
+			return ("-" + this.remainder);
+		}
+		else
+		{
+			return (this.remainder);
+		}
+	}
+	
+	public HugeInteger add(HugeInteger h)
+	{
+		String stringOfNumbers = "";
+		
+		//Adding both 'this' and 'h' strings
+		if(isSmallerOrEqualThanSecondParameter(this.remainder, h.remainder))
+		{
+			//'this' is smaller
+			if(h.sign == 1 && this.sign == 1)
+			{
+				stringOfNumbers = addStrings(h.remainder, this.remainder);
+			} else if(h.sign == 1 && this.sign == -1)
+			{
+				stringOfNumbers = subtractStrings(h.remainder, this.remainder);
+			} else if(h.sign == -1 && this.sign == 1)
+			{
+				stringOfNumbers = "-" + subtractStrings(h.remainder, this.remainder);
+			} else
+			{
+				stringOfNumbers = "-" + addStrings(h.remainder, this.remainder);
+			}
+			
+		}
+		else
+		{
+			//'h' is smaller
+			if(h.sign == 1 && this.sign == 1)
+			{
+				stringOfNumbers = addStrings(this.remainder, h.remainder);
+			} else if(h.sign == 1 && this.sign == -1)
+			{
+				stringOfNumbers = "-" + subtractStrings(this.remainder, h.remainder);
+			} else if(h.sign == -1 && this.sign == 1)
+			{
+				stringOfNumbers = subtractStrings(this.remainder, h.remainder);
+			} else
+			{
+				stringOfNumbers = "-" + addStrings(this.remainder, h.remainder);
+			}
+		}
+		
+		//Making the HugeInteger objects to be returned
+		HugeInteger finalObject = new HugeInteger(stringOfNumbers);
+		return finalObject;
+	}
+	
+	public HugeInteger subtract(HugeInteger h)
+	{
+		String stringOfNumbers = "";
+		
+		if(isSmallerOrEqualThanSecondParameter(this.remainder, h.remainder))
+		{
+			//'h' is larger
+			if(h.sign == 1 && this.sign == 1)
+			{
+				stringOfNumbers = "-" + subtractStrings(h.remainder, this.remainder);
+			} else if(h.sign == 1 && this.sign == -1)
+			{
+				stringOfNumbers = "-" + addStrings(h.remainder, this.remainder);
+			} else if(h.sign == -1 && this.sign == 1)
+			{
+				stringOfNumbers = addStrings(h.remainder, this.remainder);
+			} else
+			{
+				stringOfNumbers = subtractStrings(h.remainder, this.remainder);
+			}
+		}
+		else
+		{
+			//'this' is larger
+			if(h.sign == 1 && this.sign == 1)
+			{
+				stringOfNumbers = subtractStrings(this.remainder, h.remainder);
+			} else if(h.sign == 1 && this.sign == -1)
+			{
+				stringOfNumbers = "-" + addStrings(this.remainder, h.remainder);
+			} else if(h.sign == -1 && this.sign == 1)
+			{
+				stringOfNumbers = addStrings(this.remainder, h.remainder);
+			} else
+			{
+				stringOfNumbers = "-" + subtractStrings(this.remainder, h.remainder);
+			}
+		}
+		HugeInteger newObject = new HugeInteger(stringOfNumbers);
+		
+		return newObject;
+	}
+	
+	public HugeInteger multiply(HugeInteger h)
+	{
+		String toReturn = "0";
+		HugeInteger returningObject = new HugeInteger(toReturn);
+		if(this.remainder.equals("0") || h.remainder.equals("0"))
+		{
+			//Do nothing - just keep the 'toReturn' string at (0) and return the object
+		}
+		else
+		{
+			String toAdd = this.remainder;
+			
+			for(int i = 0; !h.remainder.equals("0");)
+			{
+				 if(isSmallerOrEqualThanSecondParameter(toAdd, returningObject.remainder))
+				 {
+					 returningObject.remainder = returningObject.addStrings(returningObject.remainder, toAdd);
+				 }
+				 else
+				 {
+					 returningObject.remainder = returningObject.addStrings(toAdd, returningObject.remainder);
+				 }
+				 
+				 //Subtracting '1' from 'h'.remainder
+				 if(isSmallerOrEqualThanSecondParameter("1", h.remainder))
+				 {
+					 h.remainder = h.subtractStrings(h.remainder, "1");
+				 }
+				 else
+				 {
+					 h.remainder = h.subtractStrings("1", h.remainder); 
+				 }
+				 System.out.println(returningObject.remainder + "     " + h.remainder);
+			}
+			//Adding a check if the product ends up being negative
+			if(this.sign != h.sign)
+			{
+				returningObject.sign = -1;
+			}
+		}
+		
+		return returningObject;
+	}
+	
+	public int compareTo(HugeInteger h)
+	{
+		if(this.remainder.equals(h.remainder) && this.sign == h.sign)
+		{
+			//First check equality | if the same, return 0
+			return 0;
+		}
+		else if(this.sign == -1 && h.sign == -1)
+		{
+			//If the signs are opposite, then return the opposite of the normal
+			if(isSmallerOrEqualThanSecondParameter(this.remainder, h.remainder))
+			{
+				return 1;
+			}
+			else
+			{
+				return -1;
+			}
+		}
+		else
+		{
+			if(isSmallerOrEqualThanSecondParameter(this.remainder, h.remainder) || (this.sign == -1 && h.sign == 1))
+			{
+				//If 'this' is smaller, return -1
+				return -1;
+			}
+			else
+			{
+				//If 'this' is larger, return 1
+				return 1;
+			}
+		}
+	}
+	
+	public static String removeLeadingZeros(String s)
+	{
+		int finalLength = s.length() - 1;
+		for(int i = 0; i < finalLength; i++)
+		{
+			if(s.charAt(0) == '0')
+			{
+				s = s.substring(1);
+			}
+		}
+		return s;
+	}
+
+	public static Boolean isThereIllegalChar(String s)
+	{
+		for(int i = 0; i < s.length(); i++)
+		{
+			//Checking if the character at index (i) is recognized as a digit
+			if(!Character.isDigit(s.charAt(i)))
+			{
+				return true;
+			}
+		}
+		//If the program gets here, there are no (non-digit) characters in the String s
+		return false;
+	}
+	
+	public static String addZerosMethod(int c)
+	{
+		String toReturn = "";
+		for(int i = 0; i < c; i++)
+		{
+			toReturn += "0";
+		}
+		return toReturn;
+	}
+	
+	public static void main(String[] args)
+	{
+		//MAX = 2147483647
+		HugeInteger h1 = new HugeInteger("1234");
+		HugeInteger h2 = new HugeInteger("725697");
+		HugeInteger h3 = h1.multiply(h2);
+		System.out.println(h3.toString());
+	}
+
+}

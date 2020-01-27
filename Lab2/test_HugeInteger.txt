@@ -1,0 +1,59 @@
+
+public class test_HugeInteger {
+
+/*
+ * This lab must test...
+ * compareTo() method, add() and subtract() of positive and negative numbers
+ * multiply()
+ * 	
+ */
+	
+	public static void main(String[] args) {
+		//Testing compareTo()
+		HugeInteger h1 = new HugeInteger("12");
+		HugeInteger h2 = new HugeInteger("-12");
+		System.out.println("Testing compareTo() | comparing " + h1.toString() + " and " + h2.toString());
+		System.out.println("---------------------------------------------");
+		System.out.println(h1.compareTo(h2) + "\n\n");
+		
+		//Testing add() with positive and negative numbers
+		HugeInteger h3 = new HugeInteger("-999");
+		HugeInteger h4 = new HugeInteger("999");
+		HugeInteger h5 = h3.add(h4);
+		System.out.println("Testing add() with pos and neg numbers | adding " + h3.toString() + " and " + h4.toString());
+		System.out.println("---------------------------------------------");
+		System.out.println(h5.toString() + "\n\n");
+		
+		HugeInteger h6 = new HugeInteger("-9999");
+		HugeInteger h7 = new HugeInteger("-1");
+		HugeInteger h8 = h6.add(h7);
+		System.out.println("Testing add() with pos and neg numbers | adding " + h6.toString() + " and " + h7.toString());
+		System.out.println("---------------------------------------------");
+		System.out.println(h8.toString() + "\n\n");
+		
+		//Testing subtract() with positive and negative numbers
+		HugeInteger h9 = new HugeInteger("999");
+		HugeInteger h10 = new HugeInteger("900");
+		HugeInteger h11 = h9.subtract(h10);
+		System.out.println("Testing subtract() with pos and neg numbers | subtracting " + h10.toString() + " from " + h9.toString());
+		System.out.println("---------------------------------------------");
+		System.out.println(h11.toString() + "\n\n");
+		
+		HugeInteger h12 = new HugeInteger("-1000");
+		HugeInteger h13 = new HugeInteger("-999");
+		HugeInteger h14 = h12.subtract(h13);
+		System.out.println("Testing subtract() with pos and neg numbers | subtracting " + h13.toString() + " from " + h12.toString());
+		System.out.println("---------------------------------------------");
+		System.out.println(h14.toString() + "\n\n");
+		
+		//Testing multiply()
+		HugeInteger h15 = new HugeInteger("144");
+		HugeInteger h16 = new HugeInteger("123456");
+		HugeInteger h17 = h15.multiply(h16);
+		System.out.println("Testing multiply() with pos and neg numbers");
+		System.out.println("---------------------------------------------");
+		System.out.println(h17.toString() + "\n\n");
+		
+	}
+
+}
