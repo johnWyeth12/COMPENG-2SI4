@@ -211,7 +211,7 @@ public class HugeInteger {
 		return finalString;
 	}
 
-	public String addStrings(String longer, String shorter) throws IllegalArgumentException
+	public static String addStrings(String longer, String shorter) throws IllegalArgumentException
 	{
 		String remaining = "";
 		String backwardsString = "";
@@ -224,51 +224,59 @@ public class HugeInteger {
 		{
 			throw new IllegalArgumentException("Wrong Order Of Parameters");
 		}
-		
-		for(int i = longer.length() - 1; i >= offset; i--)
+		if(shorter.length() == 1 && longer.length() == 1)
 		{
-			if(Character.getNumericValue(longer.charAt(i + specialCarry)) + Character.getNumericValue(shorter.charAt(i - offset)) >= 10)
+			return Integer.toString(Integer.parseInt(longer) + Integer.parseInt(shorter));
+		}
+		else
+		{
+			for(int i = longer.length() - 1; i >= offset; i--)
 			{
-				int tempCarry = 1;
-				//The carry condition
-				remaining = "";
-				
-				remaining = remaining + Integer.toString(Character.getNumericValue(longer.charAt(i)) + Character.getNumericValue(shorter.charAt(i - offset)) - 10);
-				backwardsString += remaining;
-				
-				//Adding 1 to the next column
-				//The next line makes sure the carry works properly
-				while((i - carryOffset > 0) && Integer.toString(Character.getNumericValue(longer.charAt(i - carryOffset - tempCarry))).equals("9"))
+				if(Character.getNumericValue(longer.charAt(i + specialCarry)) + Character.getNumericValue(shorter.charAt(i - offset)) >= 10)
 				{
-					tempCarry = 0;
-					//This case is for when the carry happens on the Least Sig Digit
-					longer = longer.substring(0, i - carryOffset) + addZerosMethod(longer.length() - i + carryOffset);
-					carryOffset++;
-				}
-				
-				if(i - carryOffset == 0)
-				{
-					if(Character.getNumericValue(longer.charAt(0)) + 1 == 10)
+					int tempCarry = 1;
+					//The carry condition
+					remaining = "";
+					
+					remaining = remaining + Integer.toString(Character.getNumericValue(longer.charAt(i)) + Character.getNumericValue(shorter.charAt(i - offset)) - 10);
+					backwardsString += remaining;
+					
+					//Adding 1 to the next column
+					//The next line makes sure the carry works properly
+					while((i - carryOffset > 0) && Integer.toString(Character.getNumericValue(longer.charAt(i - carryOffset - tempCarry))).equals("9"))
 					{
-						specialCarry++;
+						tempCarry = 0;
+						//This case is for when the carry happens on the Least Sig Digit
+						longer = longer.substring(0, i - carryOffset) + addZerosMethod(longer.length() - i + carryOffset);
+						carryOffset++;
 					}
-					longer = Integer.toString(Character.getNumericValue(longer.charAt(0)) + 1) + longer.substring(1);
-					//longer = longer.substring(0, i - carryOffset - 1) + Integer.toString(Character.getNumericValue(longer.charAt(i - carryOffset - 1)) + 1) + longer.substring(i - carryOffset);
-				}
-				else
+					
+					if(i - carryOffset == 0)
+					{
+						if(Character.getNumericValue(longer.charAt(0)) + 1 == 10)
+						{
+							specialCarry++;
+						}
+						longer = Integer.toString(Character.getNumericValue(longer.charAt(0)) + 1) + longer.substring(1);
+						//longer = longer.substring(0, i - carryOffset - 1) + Integer.toString(Character.getNumericValue(longer.charAt(i - carryOffset - 1)) + 1) + longer.substring(i - carryOffset);
+					}
+					else
+					{
+						longer = longer.substring(0, i - carryOffset - tempCarry) + Integer.toString(Character.getNumericValue(longer.charAt(i - carryOffset - tempCarry)) + 1) + longer.substring(i - carryOffset - tempCarry + 1);
+					}
+					
+				}else
 				{
-					longer = longer.substring(0, i - carryOffset - tempCarry) + Integer.toString(Character.getNumericValue(longer.charAt(i - carryOffset - tempCarry)) + 1) + longer.substring(i - carryOffset - tempCarry + 1);
+					remaining = "";
+					carryOffset = 0;
+					
+					remaining = remaining + Integer.toString(Character.getNumericValue(longer.charAt(i + specialCarry)) + Character.getNumericValue(shorter.charAt(i - offset)));
+					backwardsString += remaining;
 				}
-				
-			}else
-			{
-				remaining = "";
-				carryOffset = 0;
-				
-				remaining = remaining + Integer.toString(Character.getNumericValue(longer.charAt(i + specialCarry)) + Character.getNumericValue(shorter.charAt(i - offset)));
-				backwardsString += remaining;
 			}
 		}
+		
+		
 		
 		//Add any decimal places that weren't touched
 		for(int i = offset + specialCarry - 1; i >= 0; i--)
@@ -401,7 +409,7 @@ public class HugeInteger {
 		{
 			String toAdd = this.remainder;
 			
-			for(int i = 0; !h.remainder.equals("0");)
+			while(!h.remainder.equals("0"))
 			{
 				 if(isSmallerOrEqualThanSecondParameter(toAdd, returningObject.remainder))
 				 {
@@ -421,7 +429,6 @@ public class HugeInteger {
 				 {
 					 h.remainder = h.subtractStrings("1", h.remainder); 
 				 }
-				 System.out.println(returningObject.remainder + "     " + h.remainder);
 			}
 			//Adding a check if the product ends up being negative
 			if(this.sign != h.sign)
@@ -507,9 +514,10 @@ public class HugeInteger {
 	public static void main(String[] args)
 	{
 		//MAX = 2147483647
-		HugeInteger h1 = new HugeInteger("1234");
-		HugeInteger h2 = new HugeInteger("725697");
+		HugeInteger h1 = new HugeInteger("-2");
+		HugeInteger h2 = new HugeInteger("-8");
 		HugeInteger h3 = h1.multiply(h2);
+		
 		System.out.println(h3.toString());
 	}
 
