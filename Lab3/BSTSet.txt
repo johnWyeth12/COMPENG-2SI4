@@ -1,0 +1,563 @@
+
+public class BSTSet {
+	private TNode root;
+	
+	public BSTSet()
+	{root = null;}
+	
+	public BSTSet(int[] input)
+	{
+		if(input.length == 0)
+		{
+			root = null;
+		}
+		else
+		{
+			//Setting root node
+			root = new TNode(input[0], null, null);
+			TNode runner = root;
+			
+			for(int i = 1; i < input.length; i++)
+			{
+				//Each iteration of the while loop places a new node
+				runner = root;
+				while(true)
+				{
+					if(input[i] < runner.element)
+					{
+						//move LEFT
+						if(runner.left == null)
+						{
+							runner.left = new TNode(input[i], null, null);
+							break;
+						}
+						else
+						{
+							runner = runner.left;
+						}
+						
+					}else if(input[i] > runner.element)
+					{
+						//move RIGHT
+						if(runner.right == null)
+						{
+							runner.right = new TNode(input[i], null, null);
+							break;
+						}
+						else
+						{
+							runner = runner.right;
+						}
+					}
+					else
+					{break;}
+					
+					
+				}
+			}
+		}
+		
+	}
+	
+	public boolean isIn(int v)
+	{
+		TNode runner = this.root;
+		
+		//go as long as the runner node isn't a leaf
+		while(true)
+		{
+			if(v == runner.element)
+			{
+				//if equal
+				return true;
+			}
+			else 
+			//fail safe check
+			if(runner.left == null && runner.right == null)
+			{
+				//if program gets here, (v) isn't in the BST
+				return false;
+			}
+			
+			if(v > runner.element)
+			{
+				//move right
+				runner = runner.right;
+			}
+			else
+			{
+				//move left
+				runner = runner.left;
+			}
+		}
+	}
+	
+	public void add(int v)
+	{
+		TNode runner = this.root;
+		
+		//goto the node that (v) will be added too
+		while(true)
+		{
+			if(v < runner.element)
+			{
+				if(runner.left == null)
+				{
+					//break the infinite loop after the node is added
+					runner.left = new TNode(v, null, null);
+					break;
+				}
+				else
+				{
+					//move left
+					runner = runner.left;
+				}
+			}
+			else if(v > runner.element)
+			{
+				if(runner.right == null)
+				{
+					//break the infinite loop after the node is added
+					runner.right = new TNode(v, null, null);
+					break;
+				}
+				else
+				{
+					//move right
+					runner = runner.right;
+				}
+			}
+			else {break;/*if equal, do thing and break*/}
+		}
+	}
+	
+	public boolean remove(int v)
+	{
+		/*
+		 * Case1: Node has NO children
+		 * Case2: Node has 1 child
+		 * Case3: Node has 2 children
+		 */
+		TNode runner = this.root;
+		
+		//if it's not in the BST, return false off the bat
+		if(!this.isIn(v))
+		{
+			return false;
+		}
+		
+		//edge case - (v) is the root node
+		if(v == runner.element)
+		{
+			//delete the root... - finding the SMALLEST val in the right side of tree
+			runner = runner.right;
+			while(runner.left != null)
+			{
+				runner = runner.left;
+			}
+			
+			//once at the smallest val on the right side
+			runner.left = this.root.left;
+			runner.right = this.root.right;
+			TNode finalSweep = this.root.right;
+			this.root = runner;
+			
+			//Deleting the (v) node from the bottom of the tree
+			while(finalSweep.left.element != this.root.element)
+			{
+				finalSweep = finalSweep.left;
+			}
+			finalSweep.left = null;
+			
+			return true;
+		}
+		
+		//navigate to the node BEFORE the one to be deleted
+		while( (runner.left != null && runner.right != null)
+				&& (runner.left.element != v && runner.right.element != v) )
+		{
+			if(v < runner.element)
+			{
+				//move left
+				runner = runner.left;
+			}else if(v > runner.element)
+			{
+				//move right
+				runner = runner.right;
+			}
+		}
+		
+		//action on left child
+		if(runner.left != null && v == runner.left.element)
+		{			
+			//Case1: Node has NO children
+			if(isLeaf(runner.left))
+			{
+				//delete left leaf child
+				runner.left = null;
+				return true;
+			}
+			else
+				
+			//Case2: Node has 1 child
+			if( (runner.left.left == null && runner.left.right != null)
+					|| (runner.left.left != null && runner.left.right == null) )
+			{
+				//find the non-null branch
+				if(runner.left.left != null)
+				{
+					runner.left = runner.left.left;
+					return true;
+				}
+				else
+				{
+					runner.left = runner.left.right;
+					return true;
+				}
+			}
+			
+			//Case3: Node has 2 children
+			//Always go right first - then find the smallest val in that tree
+			TNode findNewNode = runner.left.right;
+			
+			//go to the smallest node
+			while(findNewNode.left != null)
+			{
+				findNewNode = findNewNode.left;
+			}
+			
+			runner.left.element = findNewNode.element;
+			
+			//delete the node that was just brought up
+			//set up to the right of the newest node
+			if(runner.left.right.element != findNewNode.element)
+			{
+				findNewNode = runner.left.right;
+				
+				while(findNewNode.left != null
+						&& (findNewNode.left.element != runner.left.element) )
+				{
+					findNewNode = findNewNode.left;
+				}
+				//cut off the duplicate node
+				findNewNode.left = null;
+			}
+			else
+			{
+				runner.left.right = null;
+			}
+			return true;
+			
+		}
+		
+		//action on right node
+		else
+		{
+			//Case1: Node has NO children
+			if(isLeaf(runner.right))
+			{
+				//delete leaf right child
+				runner.right = null;
+				return true;
+			}
+			else
+				
+			//Case2: Node has 1 child
+			if( (runner.right.left == null && runner.right.right != null)
+					|| (runner.right.left != null && runner.right.right == null) )
+			{
+				//find the non-null branch
+				if(runner.right.left != null)
+				{
+					runner.right = runner.right.left;
+					return true;
+				}
+				else
+				{
+					runner.right = runner.right.right;
+					return true;
+				}
+			}
+			
+			//Case3: Node has 2 children
+			//Always go right first - then find the smallest val in that tree
+			TNode findNewNode = runner.right.right;
+			
+			//go to the smallest node
+			while(findNewNode.left != null)
+			{
+				findNewNode = findNewNode.left;
+			}
+			
+			runner.right.element = findNewNode.element;
+			
+			if(runner.right.right.element != findNewNode.element)
+			{
+				findNewNode = runner.left.right;
+				
+				while(findNewNode.left != null
+						&& (findNewNode.left.element != runner.left.element) )
+				{
+					findNewNode = findNewNode.left;
+				}
+				//cut off the duplicate node
+				findNewNode.left = null;
+			}
+			else
+			{
+				runner.right.right = null;
+			}		
+			return true;
+		}		
+		
+	}
+	
+	public boolean isLeaf(TNode node)
+	{
+		return (node.left == null && node.right == null);
+	}
+	
+	public int getSize(TNode node)
+	{
+		if(node == null)
+		{
+			return 0;
+		}
+		else
+		{
+			return (getSize(node.left) + getSize(node.right) + 1);
+		}
+	}
+	
+	public int size()
+	{
+		return getSize(this.root);
+	}
+	
+	public static int getArrayFromTree(TNode node, int[] array, int i)
+	{
+		if (node == null) 
+		{return i;}
+		
+	    i = getArrayFromTree(node.left, array, i);
+	    array[i++] = node.element;
+	    i = getArrayFromTree(node.right, array, i);
+	    return i;
+	}
+	
+	public boolean isIn(int[] array, int val)
+	{
+		for(int i = 0; i < array.length; i++)
+		{
+			if(array[i] == val)
+			{return true;}
+		}
+		return false;
+	}
+	
+	public BSTSet union (BSTSet s)
+	{
+		int[] thisArray = new int[this.size()];
+		int[] sArray = new int[s.size()];
+		int[] finalArray = new int[this.size() + s.size()];
+		int count = 0;
+		int[] longer = {};
+		int[] shorter = {};
+		getArrayFromTree(this.root, thisArray, 0);
+		getArrayFromTree(s.root, sArray, 0);
+		
+		if(thisArray.length > sArray.length)
+		{
+			longer = thisArray;
+			shorter = sArray;
+		}
+		else
+		{
+			longer = sArray;
+			shorter = thisArray;
+		}
+		
+		for(int i = 0; i < longer.length; i++)
+		{
+			finalArray[count] = longer[i];
+			count++;
+		}
+		for(int i = 0; i < shorter.length; i++)
+		{
+			if(!isIn(finalArray, shorter[i]))
+			{
+				finalArray[count] = shorter[i];
+				count++;
+			}
+		}
+		
+		//getting rid of any zeros
+		int[] objectArray = new int[count];
+		for(int i = 0; i < count; i++)
+		{
+			objectArray[i] = finalArray[i];
+		}
+		
+		BSTSet tada = new BSTSet(objectArray);
+		return tada;
+	}
+	
+	public BSTSet intersection(BSTSet s)
+	{
+		int[] thisArray = new int[this.size()];
+		int[] sArray = new int[s.size()];
+		int[] finalArray = new int[this.size() + s.size()];
+		int count = 0;
+		int[] longer = {};
+		int[] shorter = {};
+		getArrayFromTree(this.root, thisArray, 0);
+		getArrayFromTree(s.root, sArray, 0);
+		
+		if(thisArray.length > sArray.length)
+		{
+			longer = thisArray;
+			shorter = sArray;
+		}
+		else
+		{
+			longer = sArray;
+			shorter = thisArray;
+		}
+		
+		for(int i = 0; i < longer.length; i++)
+		{
+			if(isIn(shorter, longer[i]) && !isIn(finalArray, longer[i]))
+			{
+				finalArray[count] = longer[i];
+				count++;
+			}
+		}
+		
+		//getting rid of any zeros
+		int[] objectArray = new int[count];
+		for(int i = 0; i < count; i++)
+		{
+			objectArray[i] = finalArray[i];
+		}
+		
+		BSTSet tada = new BSTSet(objectArray);
+		return tada;
+	}
+	
+	public BSTSet difference(BSTSet s)
+	{
+		int[] thisArray = new int[this.size()];
+		int[] sArray = new int[s.size()];
+		int[] finalArray = new int[this.size() + s.size()];
+		int count = 0;
+		int[] longer = {};
+		int[] shorter = {};
+		getArrayFromTree(this.root, thisArray, 0);
+		getArrayFromTree(s.root, sArray, 0);
+		
+		if(thisArray.length > sArray.length)
+		{
+			longer = thisArray;
+			shorter = sArray;
+		}
+		else
+		{
+			longer = sArray;
+			shorter = thisArray;
+		}
+		
+		for(int i = 0; i < longer.length; i++)
+		{
+			if(!isIn(shorter, longer[i]) && !isIn(finalArray, longer[i]))
+			{
+				finalArray[count] = longer[i];
+				count++;
+			}
+		}
+		for(int i = 0; i < shorter.length; i++)
+		{
+			if(!isIn(longer, shorter[i]) && !isIn(finalArray, shorter[i]))
+			{
+				finalArray[count] = shorter[i];
+				count++;
+			}
+		}
+		
+		//getting rid of any zeros
+		int[] objectArray = new int[count];
+		for(int i = 0; i < count; i++)
+		{
+			objectArray[i] = finalArray[i];
+		}
+		
+		BSTSet tada = new BSTSet(objectArray);
+		return tada;
+		
+	}
+	
+	public int height()
+	{
+		if(this.root == null)
+		{
+			return -1;
+		}
+		else
+		{
+			// -1 because root node has depth "0"
+			return getHeight(this.root) - 1;
+		}
+	}
+	
+	public int getHeight(TNode node)
+	{
+		if (node == null) 
+            return 0; 
+        else 
+        { 
+            //call same method to get depth of leaf
+            int leftD = getHeight(node.left); 
+            int rightD = getHeight(node.right); 
+   
+            if (rightD < leftD) 
+                return (leftD + 1); 
+             else 
+                return (rightD + 1); 
+        } 
+	}
+	
+	public void printBSTSet()
+	{
+		if(root == null)
+		{
+			System.out.println("The set is empty");
+		}
+		else
+		{
+			System.out.print("The set elements are: ");
+			printBSTSet(root);
+			System.out.print("\n");
+		}
+	}
+	
+	private void printBSTSet(TNode t)
+	{
+		if(t != null)
+		{
+			printBSTSet(t.left);
+			System.out.print(" " + t.element + ", ");
+			printBSTSet(t.right);
+		}
+	}
+	
+	public static void main(String[] args)
+	{
+		int[] s1 = {};
+		int[] s2 = {3, 1, 5, 7};
+		
+		BSTSet b1 = new BSTSet(s1);
+		BSTSet b2 = new BSTSet(s2);
+		BSTSet b3 = b1.union(b2);
+		System.out.println(b1.height());
+	}
+	
+}

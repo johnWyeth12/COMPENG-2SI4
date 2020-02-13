@@ -211,7 +211,7 @@ public class HugeInteger {
 		return finalString;
 	}
 
-	public static String addStrings(String longer, String shorter) throws IllegalArgumentException
+	public String addStrings(String longer, String shorter) throws IllegalArgumentException
 	{
 		String remaining = "";
 		String backwardsString = "";
@@ -512,13 +512,6 @@ public class HugeInteger {
 	}
 	
 	public static void main(String[] args)
-	{
-		//MAX = 2147483647
-		HugeInteger h1 = new HugeInteger("-2");
-		HugeInteger h2 = new HugeInteger("-8");
-		HugeInteger h3 = h1.multiply(h2);
-		
-		System.out.println(h3.toString());
-	}
+	{}
 
 }
