@@ -309,7 +309,7 @@ public class BSTSet {
 			}		
 			return true;
 		}		
-		
+			
 	}
 	
 	public boolean isLeaf(TNode node)
@@ -455,30 +455,11 @@ public class BSTSet {
 		getArrayFromTree(this.root, thisArray, 0);
 		getArrayFromTree(s.root, sArray, 0);
 		
-		if(thisArray.length > sArray.length)
+		for(int i = 0; i < thisArray.length; i++)
 		{
-			longer = thisArray;
-			shorter = sArray;
-		}
-		else
-		{
-			longer = sArray;
-			shorter = thisArray;
-		}
-		
-		for(int i = 0; i < longer.length; i++)
-		{
-			if(!isIn(shorter, longer[i]) && !isIn(finalArray, longer[i]))
+			if(!isIn(sArray, thisArray[i]) && !isIn(finalArray, thisArray[i]))
 			{
-				finalArray[count] = longer[i];
-				count++;
-			}
-		}
-		for(int i = 0; i < shorter.length; i++)
-		{
-			if(!isIn(longer, shorter[i]) && !isIn(finalArray, shorter[i]))
-			{
-				finalArray[count] = shorter[i];
+				finalArray[count] = thisArray[i];
 				count++;
 			}
 		}
@@ -551,13 +532,13 @@ public class BSTSet {
 	
 	public static void main(String[] args)
 	{
-		int[] s1 = {};
-		int[] s2 = {3, 1, 5, 7};
+		int[] s1 = {3, 8, 12, 9};
+		int[] s2 = {9, 12, 15, 100};
 		
 		BSTSet b1 = new BSTSet(s1);
 		BSTSet b2 = new BSTSet(s2);
-		BSTSet b3 = b1.union(b2);
-		System.out.println(b1.height());
+		BSTSet b3 = b2.difference(b1);
+		b3.printBSTSet();
 	}
 	
 }
