@@ -36,15 +36,17 @@ public class HashTableLin {
 		return start;
 	}
 	
-	public static boolean isPrime(int num)
+	public static boolean isPrime(int n)
 	{
-		for(int i = 2; i < num; i++)
+		for(int i = 2; i < n; i++)
 		{
-			if(num % i == 0)
+			if(n % i == 0)
 			{
+				//If in here, 'n' is not prime
 				return false;
 			}
 		}
+		//If here, 'n' is prime
 		return true;
 	}
 	
@@ -126,15 +128,13 @@ public class HashTableLin {
 		return key;
 	}
 	
-	public static void main(String[] args)
-	{
-		HashTableLin h1 = new HashTableLin(2, 0.4);
-		h1.insert(6);
-		h1.insert(7);
-		h1.insert(8);
-		h1.insert(9);
-		h1.printKeysAndIndexes();
-	}
+	public int getSizeOfTable()
+	{return this.sizeOfTable;}
 	
+	public int getKeysStored()
+	{return this.keysStored;}
+	
+	public double getMaxLoadFactor()
+	{return this.maxLoadFactor;}
 	
 }
