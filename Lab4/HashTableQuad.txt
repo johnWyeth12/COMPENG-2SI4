@@ -33,19 +33,107 @@ public class HashTableQuad {
 		return start;
 	}
 	
-	public static boolean isPrime(int num)
+	public static boolean isPrime(int n)
 	{
-		for(int i = 2; i < num; i++)
+		for(int i = 2; i < n; i++)
 		{
-			if(num % i == 0)
+			if(n % i == 0)
 			{
-				//If in here, 'num' is not prime
+				//If in here, 'n' is not prime
 				return false;
 			}
 		}
-		//If here, 'num' is prime
+		//If here, 'n' is prime
 		return true;
 	}
+	
+	public double getLoad()
+	{
+		return (double)this.keysStored / this.sizeOfTable;
+	}
+	
+	public void insert(int n)
+	{
+		int key = this.getKey(n);
+		this.table[key] = n;
+		this.keysStored++;
+		
+		if(this.getLoad() > this.maxLoadFactor)
+		{
+			this.rehash();
+		}
+	}
+	
+	public void rehash()
+	{
+		Integer[] oldTable = this.table;
+		//Prepare/Reset the table to be rehashed
+		this.sizeOfTable = this.initTableSize(this.sizeOfTable * 2, this.maxLoadFactor);
+		this.table = initTable(this.sizeOfTable);
+		this.keysStored = 0;
+		
+		//Rehash all the old values into the new table (old table is HALF the size of the new table)
+		for(int i = 0; i < oldTable.length; i++)
+		{
+			//protect against null pointer errors
+			if(oldTable[i] != null)
+			{
+				this.insert(oldTable[i]);
+			}
+		}
+	}
+	
+	public boolean isIn(int n)
+	{
+		for(int i = 0; i < this.sizeOfTable; i++)
+		{
+			//If n is within the table, return true
+			if(this.table[i] == n)
+			{return true;}
+		}
+		//If program gets here, (n) is not in the hash table
+		return false;
+	}
+	
+	public void printKeys()
+	{
+		//Run through table and print - in no particular order
+		for(int i = 0; i < this.sizeOfTable; i++)
+		{
+			System.out.print(this.table[i] + ", ");
+		}
+	}
+	
+	public void printKeysAndIndexes()
+	{
+		for(int i = 0; i < this.sizeOfTable; i++)
+		{
+			System.out.println(i + "\t" + this.table[i]);
+		}
+	}
+	
+	/*
+	 * Implements Quadratic Probing
+	 */
+	public int getKey(int n)
+	{
+		int key = (n) % this.sizeOfTable;
+		int i = 0;
+		//Increase i by one as long as there's a collision
+		while(this.table[(key + (int)Math.pow(i, 2))] != null)
+		{i++;}
+		//Return finalized key
+		return (key + (int)Math.pow(i, 2));
+	}
+	
+	public int getSizeOfTable()
+	{return this.sizeOfTable;}
+	
+	public int getKeysStored()
+	{return this.keysStored;}
+	
+	public double getMaxLoadFactor()
+	{return this.maxLoadFactor;}
 	
 	
 }

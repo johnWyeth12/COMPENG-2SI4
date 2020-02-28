@@ -1,0 +1,13 @@
+
+public class testHashTable {
+
+	public static void main(String[] args) {
+		HashTableQuad h1 = new HashTableQuad(3, 0.5);
+		h1.insert(7);
+		h1.insert(14);
+		h1.insert(21);
+		h1.printKeysAndIndexes();
+
+	}
+
+}
