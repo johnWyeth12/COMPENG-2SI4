@@ -1,0 +1,140 @@
+/*
+ * "Linear Probing" puts the value in the next sequential key if there's a collision
+ *  h(x) = x % sizeOfTable
+ */
+
+public class HashTableLin {
+	private Integer[] table;
+	private int sizeOfTable;
+	private int keysStored;
+	private double maxLoadFactor;
+	
+	public HashTableLin(int maxNum, double load)
+	{
+		this.sizeOfTable = initTableSize(maxNum, load);
+		this.table = initTable(sizeOfTable);
+		this.maxLoadFactor = load;
+		this.keysStored = 0;
+	}
+	
+	public Integer[] initTable(int table)
+	{
+		Integer[] newTable = new Integer[table];
+		for(int i = 0; i < newTable.length; i++)
+		{
+			newTable[i] = null;
+		}
+		return newTable;
+	}
+	
+	public int initTableSize(int maxnum, double load)
+	{
+		int start = (int)Math.ceil(maxnum / load);
+		while(!isPrime(start))
+		{start++;}
+		
+		return start;
+	}
+	
+	public static boolean isPrime(int num)
+	{
+		for(int i = 2; i < num; i++)
+		{
+			if(num % i == 0)
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public double getLoad()
+	{
+		return (double)this.keysStored / this.sizeOfTable;
+	}
+	
+	public void insert(int n)
+	{
+		int key = this.getKey(n);
+		this.table[key] = n;
+		this.keysStored++;
+		
+		if(this.getLoad() > this.maxLoadFactor)
+		{
+			this.rehash();
+		}
+	}
+	
+	public void rehash()
+	{
+		Integer[] oldTable = this.table;
+		//Prepare/Reset the table to be rehashed
+		this.sizeOfTable = this.initTableSize(this.sizeOfTable * 2, this.maxLoadFactor);
+		this.table = initTable(this.sizeOfTable);
+		this.keysStored = 0;
+		
+		//Rehash all the old values into the new table (old table is HALF the size of the new table)
+		for(int i = 0; i < oldTable.length; i++)
+		{
+			//protect against null pointer errors
+			if(oldTable[i] != null)
+			{
+				this.insert(oldTable[i]);
+			}
+		}
+	}
+	
+	public boolean isIn(int n)
+	{
+		for(int i = 0; i < this.sizeOfTable; i++)
+		{
+			//If n is within the table, return true
+			if(this.table[i] == n)
+			{return true;}
+		}
+		//If program gets here, (n) is not in the hash table
+		return false;
+	}
+	
+	public void printKeys()
+	{
+		//Run through table and print - in no particular order
+		for(int i = 0; i < this.sizeOfTable; i++)
+		{
+			System.out.print(this.table[i] + " , ");
+		}
+	}
+	
+	public void printKeysAndIndexes()
+	{
+		for(int i = 0; i < this.sizeOfTable; i++)
+		{
+			System.out.println(i + "\t" + this.table[i]);
+		}
+	}
+	
+	/*
+	 * Implements Linear Probing
+	 */
+	public int getKey(int n)
+	{
+		int key = (n) % this.sizeOfTable;
+		//Increase key by one as long as there's a collision
+		while(this.table[key] != null)
+		{key++;}
+		//Return finalized key
+		return key;
+	}
+	
+	public static void main(String[] args)
+	{
+		HashTableLin h1 = new HashTableLin(2, 0.4);
+		h1.insert(6);
+		h1.insert(7);
+		h1.insert(8);
+		h1.insert(9);
+		h1.printKeysAndIndexes();
+	}
+	
+	
+}

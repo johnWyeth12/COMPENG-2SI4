@@ -1,0 +1,51 @@
+
+public class HashTableQuad {
+	private Integer[] table;
+	private int sizeOfTable;
+	private int keysStored;
+	private double maxLoadFactor;
+	
+	public HashTableQuad(int maxNum, double load)
+	{
+		sizeOfTable = initTableSize(maxNum, load);
+		table = initTable(sizeOfTable);
+		maxLoadFactor = load;
+	}
+	
+	public Integer[] initTable(int table)
+	{
+		Integer[] newTable = new Integer[table];
+		for(int i = 0; i < newTable.length; i++)
+		{
+			newTable[i] = null;
+		}
+		return newTable;
+	}
+	
+	public static int initTableSize(int maxnum, double load)
+	{
+		int start = (int)Math.ceil(maxnum / load);
+		//Increase by one each time and check if it's a prime number
+		while(!isPrime(start))
+		{start++;}
+		
+		//returning the smallest PRIME number to (maxNum / load)
+		return start;
+	}
+	
+	public static boolean isPrime(int num)
+	{
+		for(int i = 2; i < num; i++)
+		{
+			if(num % i == 0)
+			{
+				//If in here, 'num' is not prime
+				return false;
+			}
+		}
+		//If here, 'num' is prime
+		return true;
+	}
+	
+	
+}
