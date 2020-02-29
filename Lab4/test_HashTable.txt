@@ -2,12 +2,126 @@
 public class testHashTable {
 
 	public static void main(String[] args) {
-		HashTableQuad h1 = new HashTableQuad(3, 0.5);
-		h1.insert(7);
-		h1.insert(14);
-		h1.insert(21);
+		/*
+		 * HashTableLin
+		 */
+		System.out.println("***************************LINEAR PROBING TESTING***************************");
+		//Constructor
+		System.out.println("Testing Constructors");
+		System.out.println("-------------------------------------");
+		HashTableLin h1 = new HashTableLin(5, 0.4);
+		System.out.println("Length --> expected: 13, actual: " + h1.getSizeOfTable());
+		System.out.println("Max Load Allowed --> expected: 0.4, actual: " + h1.getMaxLoadFactor() + "\n");
+				
+		//Insert
+		System.out.println("Testing insert(15)");
+		System.out.println("-------------------------------------");
+		h1.insert(15);
+		System.out.println("Keys Stored --> expected: 1, actual: " + h1.getKeysStored());
+		System.out.println("IsIn(15) --> expected: true, actual: " + h1.isIn(15));
+		System.out.println("Hash Table Printed Out:");
 		h1.printKeysAndIndexes();
-
+		System.out.println("\n");
+		
+		System.out.println("Testing no duplicates | inserting(15) - expected no change");
+		h1.insert(15);
+		System.out.println("Hash Table:");
+		h1.printKeysAndIndexes();
+		System.out.println("\n");
+		
+		System.out.println("Testing insert (28) - should use linear probing to place at index 3");
+		System.out.println("-------------------------------------");
+		h1.insert(28);
+		System.out.println("Keys Stored --> expected: 2, actual: " + h1.getKeysStored());
+		System.out.println("IsIn(28) --> expected: true, actual: " + h1.isIn(28));
+		System.out.println("Hash Table Printed Out:");
+		h1.printKeysAndIndexes();
+		System.out.println("\n");
+		
+		//Rehashing
+		System.out.println("Testing Rehashing | HashTableLin(2, 0.5)");
+		System.out.println("-------------------------------------");
+		HashTableLin h2 = new HashTableLin(2, 0.5);
+		System.out.println("Inserting (7, 8)");
+		h2.insert(7);
+		h2.insert(8);
+		System.out.println("Length --> expected: 5, actual: " + h2.getSizeOfTable());
+		System.out.println("Max Load Allowed --> expected: 0.5, actual: " + h2.getMaxLoadFactor());
+		System.out.println("Keys Stored --> expected: 2, actual: " + h2.getKeysStored());
+		System.out.println("Hash Table BEFORE:");
+		h2.printKeysAndIndexes();
+		System.out.println("Inserting 5 - should rehash...");
+		h2.insert(5);
+		System.out.println("Hash Table AFTER:");
+		h2.printKeysAndIndexes();
+		System.out.println("Length --> expected: 11 (5*2 + 1), actual: " + h2.getSizeOfTable());
+		System.out.println("Max Load Allowed --> expected: 0.5, actual: " + h2.getMaxLoadFactor());
+		System.out.println("Keys Stored --> expected: 3, actual: " + h2.getKeysStored() + "\n\n");
+		
+		
+		
+		
+		/*
+		 * HashTableQuad
+		 */
+		System.out.println("***************************QUADRATIC PROBING TESTING***************************");
+		//Constructor
+		System.out.println("Testing Constructors");
+		System.out.println("-------------------------------------");
+		HashTableLin h3= new HashTableLin(5, 0.4);
+		System.out.println("Length --> expected: 13, actual: " + h3.getSizeOfTable());
+		System.out.println("Max Load Allowed --> expected: 0.4, actual: " + h3.getMaxLoadFactor() + "\n");
+				
+		//Insert
+		System.out.println("Testing insert(15)");
+		System.out.println("-------------------------------------");
+		h3.insert(15);
+		System.out.println("Keys Stored --> expected: 1, actual: " + h3.getKeysStored());
+		System.out.println("IsIn(15) --> expected: true, actual: " + h3.isIn(15));
+		System.out.println("Hash Table Printed Out:");
+		h3.printKeysAndIndexes();
+		System.out.println("\n");
+		
+		System.out.println("Testing no duplicates | inserting(15) - expected no change");
+		h3.insert(15);
+		System.out.println("Hash Table:");
+		h3.printKeysAndIndexes();
+		System.out.println("\n");
+		
+		System.out.println("Testing insert (28) - should use linear probing to place at index 3");
+		System.out.println("-------------------------------------");
+		h3.insert(28);
+		System.out.println("Keys Stored --> expected: 2, actual: " + h3.getKeysStored());
+		System.out.println("IsIn(28) --> expected: true, actual: " + h3.isIn(28));
+		System.out.println("Hash Table Printed Out:");
+		h3.printKeysAndIndexes();
+		System.out.println("\n");
+		
+		//Rehashing
+		System.out.println("Testing Rehashing | HashTableLin(2, 0.5)");
+		System.out.println("-------------------------------------");
+		HashTableLin h4 = new HashTableLin(2, 0.5);
+		System.out.println("Inserting (7, 8)");
+		h4.insert(7);
+		h4.insert(8);
+		System.out.println("Length --> expected: 5, actual: " + h4.getSizeOfTable());
+		System.out.println("Max Load Allowed --> expected: 0.5, actual: " + h4.getMaxLoadFactor());
+		System.out.println("Keys Stored --> expected: 2, actual: " + h4.getKeysStored());
+		System.out.println("Hash Table BEFORE:");
+		h4.printKeysAndIndexes();
+		System.out.println("Inserting 5 - should rehash...");
+		h4.insert(5);
+		System.out.println("Hash Table AFTER:");
+		h4.printKeysAndIndexes();
+		System.out.println("Length --> expected: 11 (5*2 + 1), actual: " + h4.getSizeOfTable());
+		System.out.println("Max Load Allowed --> expected: 0.5, actual: " + h4.getMaxLoadFactor());
+		System.out.println("Keys Stored --> expected: 3, actual: " + h4.getKeysStored());
+	
+	}
+	
+	public static void testProbing()
+	{
+		
 	}
 
 }

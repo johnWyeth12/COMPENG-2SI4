@@ -22,7 +22,7 @@ public class HashTableQuad {
 		return newTable;
 	}
 	
-	public static int initTableSize(int maxnum, double load)
+	public int initTableSize(int maxnum, double load)
 	{
 		int start = (int)Math.ceil(maxnum / load);
 		//Increase by one each time and check if it's a prime number
@@ -54,12 +54,17 @@ public class HashTableQuad {
 	
 	public void insert(int n)
 	{
+		if(isIn(n))
+		{
+			return;
+		}
 		int key = this.getKey(n);
 		this.table[key] = n;
 		this.keysStored++;
 		
 		if(this.getLoad() > this.maxLoadFactor)
 		{
+			System.out.println("rehash occuring...");
 			this.rehash();
 		}
 	}
@@ -68,7 +73,7 @@ public class HashTableQuad {
 	{
 		Integer[] oldTable = this.table;
 		//Prepare/Reset the table to be rehashed
-		this.sizeOfTable = this.initTableSize(this.sizeOfTable * 2, this.maxLoadFactor);
+		this.sizeOfTable = this.sizeOfTable * 2; while(!isPrime(this.sizeOfTable)) {this.sizeOfTable++;}
 		this.table = initTable(this.sizeOfTable);
 		this.keysStored = 0;
 		

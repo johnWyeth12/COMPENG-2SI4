@@ -11,10 +11,13 @@ public class HashTableLin {
 	
 	public HashTableLin(int maxNum, double load)
 	{
-		this.sizeOfTable = initTableSize(maxNum, load);
-		this.table = initTable(sizeOfTable);
-		this.maxLoadFactor = load;
-		this.keysStored = 0;
+		try
+		{
+			this.sizeOfTable = initTableSize(Math.abs(maxNum), Math.abs(load));
+			this.table = initTable(sizeOfTable);
+			this.maxLoadFactor = load;
+			this.keysStored = 0;
+		}catch(Exception e) {System.out.println("Invalid Input");}
 	}
 	
 	public Integer[] initTable(int table)
@@ -57,12 +60,17 @@ public class HashTableLin {
 	
 	public void insert(int n)
 	{
+		if(this.isIn(n))
+		{
+			return;
+		}
 		int key = this.getKey(n);
 		this.table[key] = n;
 		this.keysStored++;
 		
 		if(this.getLoad() > this.maxLoadFactor)
 		{
+			System.out.println("rehash occuring...");
 			this.rehash();
 		}
 	}
@@ -71,7 +79,7 @@ public class HashTableLin {
 	{
 		Integer[] oldTable = this.table;
 		//Prepare/Reset the table to be rehashed
-		this.sizeOfTable = this.initTableSize(this.sizeOfTable * 2, this.maxLoadFactor);
+		this.sizeOfTable = this.sizeOfTable * 2; while(!isPrime(this.sizeOfTable)) {this.sizeOfTable++;}
 		this.table = initTable(this.sizeOfTable);
 		this.keysStored = 0;
 		
@@ -91,7 +99,7 @@ public class HashTableLin {
 		for(int i = 0; i < this.sizeOfTable; i++)
 		{
 			//If n is within the table, return true
-			if(this.table[i] == n)
+			if(this.table[i] != null && this.table[i] == n)
 			{return true;}
 		}
 		//If program gets here, (n) is not in the hash table
@@ -103,7 +111,7 @@ public class HashTableLin {
 		//Run through table and print - in no particular order
 		for(int i = 0; i < this.sizeOfTable; i++)
 		{
-			System.out.print(this.table[i] + " , ");
+			System.out.print(this.table[i] + ", ");
 		}
 	}
 	
@@ -121,11 +129,12 @@ public class HashTableLin {
 	public int getKey(int n)
 	{
 		int key = (n) % this.sizeOfTable;
-		//Increase key by one as long as there's a collision
-		while(this.table[key] != null)
-		{key++;}
+		int i = 0;
+		//Increase i by one as long as there's a collision
+		while(this.table[key + i] != null)
+		{i++;}
 		//Return finalized key
-		return key;
+		return (key + i);
 	}
 	
 	public int getSizeOfTable()
