@@ -1,0 +1,68 @@
+
+public class MaxHeap {
+	private Integer[] tree;
+	private int size;
+	private int itemsStored;
+	
+	
+	public MaxHeap(int treeSize)
+	{
+		tree = new Integer[treeSize];
+		size = treeSize;
+		itemsStored = 0;
+		//Setting all elements in the array to (null)
+		for(int i = 0; i < treeSize; i++)
+		{tree[i] = null;}
+	}
+	
+	public MaxHeap(Integer[] someArray)
+	{
+		tree = new Integer[someArray.length];
+		size = tree.length;
+		itemsStored = 0;
+		for(int i = 0; i < tree.length; i++)
+		{
+			this.insert(someArray[i]);
+		}
+	}
+	
+	public void insert(int n)
+	{
+		this.itemsStored++;
+		//If there is no more room, make new array
+		if(this.itemsStored >= this.size)
+		{
+			Integer[] oldArray = this.tree;
+			this.tree = new Integer[this.size*2];
+			//Fill in values from old tree into new tree
+			for(int i = 0; i < oldArray.length; i++)
+			{
+				this.tree[i] = oldArray[i];
+			}
+		}
+		this.tree[this.itemsStored] = n;
+		
+		//Traverse tree + get rid of any errors
+		int runner = this.itemsStored;
+		while(this.tree[runner] > this.tree[getParentPosition(runner)])
+		{
+			//Bubble up
+			swap(getParentPosition(runner), runner);
+			//Reset with new position of runner node
+			runner = getParentPosition(runner);
+		}
+	}
+	
+	public void swap(int aPos, int bPos)
+	{
+		int temp;
+		temp = this.tree[aPos];
+		this.tree[aPos] = this.tree[bPos];
+		this.tree[bPos] = temp;
+	}
+	
+	public int getParentPosition(int position)
+	{
+		return (int)Math.floor(position/2);
+	}
+}
