@@ -67,10 +67,10 @@ public class MaxHeap {
 		return (int)Math.floor(position/2);
 	}
 	
-	public int getLeftChild(int position)
+	public int getLeft(int position)
 	{return (2*position);}
 	
-	public int getRightChild(int position)
+	public int getRight(int position)
 	{return (2*position + 1);}
 	
 	public String toString()
@@ -92,28 +92,43 @@ public class MaxHeap {
 		
 		//Bubble Down
 		int runner = 1;
-		while(this.tree[runner] < this.tree[getLeftChild(runner)]
-				|| this.tree[runner] < this.tree[getRightChild(runner)])
+		while(this.tree[runner] < this.tree[getLeft(runner)]
+				|| this.tree[runner] < this.tree[getRight(runner)])
 		{
-			//Bubble left
-			if(this.tree[runner] < this.tree[getLeftChild(runner)])
+			//Bubble LEFT
+			if(this.tree[getLeft(runner)] > this.tree[getRight(runner)])
 			{
-				swap(runner, getLeftChild(runner));
-				runner = getLeftChild(runner);
+				swap(runner, getLeft(runner));
+				runner = getLeft(runner);
 			}
-			//Bubble right
-			else
+			//Bubble RIGHT
+			else if (this.tree[getRight(runner)] > this.tree[getLeft(runner)])
 			{
-				swap(runner, getRightChild(runner));
-				runner = getRightChild(runner);
+				swap(runner, getRight(runner));
+				runner = getRight(runner);
 			}
 			
-			//Check if done or not
-			if((runner <= this.size) && (runner >= (this.size/2)))
+			if(runner >= (this.size/2) && runner <= this.size)
 			{break;}
+			
 		}
+		
 		//Return the maximum
 		return max;
 	}
+	
+	public static void heapSort(Integer[] arrayToSort)
+	{
+		MaxHeap h = new MaxHeap(arrayToSort);
+		Integer[] sortedArray = new Integer[arrayToSort.length];
+		
+		for(int i = h.itemsStored - 1; i >= 1; i--)
+		{
+			sortedArray[i] = h.deleteMax();
+		}
+		
+		System.out.println(h.toString());
+	}
+	
 	
 }
