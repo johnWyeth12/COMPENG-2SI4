@@ -4,10 +4,9 @@ public class MaxHeap {
 	private int size;
 	private int itemsStored;
 	
-	
 	public MaxHeap(int treeSize)
 	{
-		tree = new Integer[treeSize];
+		tree = new Integer[treeSize + 1];
 		size = treeSize;
 		itemsStored = 0;
 		//Setting all elements in the array to (null)
@@ -17,10 +16,10 @@ public class MaxHeap {
 	
 	public MaxHeap(Integer[] someArray)
 	{
-		tree = new Integer[someArray.length];
+		tree = new Integer[someArray.length + 1];
 		size = tree.length;
 		itemsStored = 0;
-		for(int i = 0; i < tree.length; i++)
+		for(int i = 0; (i < tree.length - 1); i++)
 		{
 			this.insert(someArray[i]);
 		}
@@ -33,7 +32,9 @@ public class MaxHeap {
 		if(this.itemsStored >= this.size)
 		{
 			Integer[] oldArray = this.tree;
+			//Updating new array attributes
 			this.tree = new Integer[this.size*2];
+			this.size*=2;
 			//Fill in values from old tree into new tree
 			for(int i = 0; i < oldArray.length; i++)
 			{
@@ -44,7 +45,7 @@ public class MaxHeap {
 		
 		//Traverse tree + get rid of any errors
 		int runner = this.itemsStored;
-		while(this.tree[runner] > this.tree[getParentPosition(runner)])
+		while((runner) > 1 && (this.tree[runner] > this.tree[getParentPosition(runner)]))
 		{
 			//Bubble up
 			swap(getParentPosition(runner), runner);
@@ -65,4 +66,54 @@ public class MaxHeap {
 	{
 		return (int)Math.floor(position/2);
 	}
+	
+	public int getLeftChild(int position)
+	{return (2*position);}
+	
+	public int getRightChild(int position)
+	{return (2*position + 1);}
+	
+	public String toString()
+	{
+		String s = "";
+		for(int i = 0; i < this.size; i++)
+		{
+			s += this.tree[i] + ", ";
+		}
+		return s;
+	}
+	
+	public int deleteMax()
+	{
+		int max = this.tree[1];
+		//Move last element to root
+		swap(1, this.itemsStored);
+		this.tree[this.itemsStored--] = null;
+		
+		//Bubble Down
+		int runner = 1;
+		while(this.tree[runner] < this.tree[getLeftChild(runner)]
+				|| this.tree[runner] < this.tree[getRightChild(runner)])
+		{
+			//Bubble left
+			if(this.tree[runner] < this.tree[getLeftChild(runner)])
+			{
+				swap(runner, getLeftChild(runner));
+				runner = getLeftChild(runner);
+			}
+			//Bubble right
+			else
+			{
+				swap(runner, getRightChild(runner));
+				runner = getRightChild(runner);
+			}
+			
+			//Check if done or not
+			if((runner <= this.size) && (runner >= (this.size/2)))
+			{break;}
+		}
+		//Return the maximum
+		return max;
+	}
+	
 }
