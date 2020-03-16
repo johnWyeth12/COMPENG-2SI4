@@ -3,6 +3,8 @@ public class MaxHeap {
 	private Integer[] tree;
 	private int size;
 	private int itemsStored;
+	private int leftFlag = 0;
+	private int rightFlag = 0;
 	
 	public MaxHeap(int treeSize)
 	{
@@ -92,24 +94,20 @@ public class MaxHeap {
 		
 		//Bubble Down
 		int runner = 1;
-		while(this.tree[runner] < this.tree[getLeft(runner)]
-				|| this.tree[runner] < this.tree[getRight(runner)])
+		while(shouldBubbleDown(runner))
 		{
-			//Bubble LEFT
-			if(this.tree[getLeft(runner)] > this.tree[getRight(runner)])
+			if(this.leftFlag == 1)
 			{
 				swap(runner, getLeft(runner));
 				runner = getLeft(runner);
+				this.clearFlags();
 			}
-			//Bubble RIGHT
-			else if (this.tree[getRight(runner)] > this.tree[getLeft(runner)])
+			else if(this.rightFlag == 1)
 			{
 				swap(runner, getRight(runner));
 				runner = getRight(runner);
+				this.clearFlags();
 			}
-			
-			if(runner >= (this.size/2) && runner <= this.size)
-			{break;}
 			
 		}
 		
@@ -117,18 +115,70 @@ public class MaxHeap {
 		return max;
 	}
 	
+	public boolean shouldBubbleDown(int r)
+	{
+		//Check for null values from children
+		if(getLeft(r) >= this.tree.length || getRight(r) >= this.tree.length) {return false;}
+		if(this.tree[getLeft(r)] == null && this.tree[getRight(r)] == null) {return false;}
+		if(this.tree[getLeft(r)] == null)
+		{
+			this.rightFlag = 1;
+			if(this.tree[r] < this.tree[getRight(r)])
+			{
+				return true;
+			} else {return false;}
+		}else if(this.tree[getRight(r)] == null)
+		{
+			this.leftFlag = 1;
+			if(this.tree[r] < this.tree[getLeft(r)])
+			{
+				return true;
+			} else {return false;}
+		}
+		
+		//Check which child is larger
+		if(this.tree[getLeft(r)] >= this.tree[getRight(r)])
+		{this.leftFlag = 1; return true;} else {this.rightFlag = 1; return true;}
+	}
+	
+	public void reArrangeTree()
+	{
+		int count = 1;
+		while(this.tree[count] != null) {count++;}
+		Integer[] newArray = new Integer[count - 1];
+		for(int i = 1; i < newArray.length; i++)
+		{
+			newArray[i] = this.tree[i];
+		}
+		
+		this.tree = newArray;
+	}
+	
+	public void clearFlags()
+	{
+		this.leftFlag = 0;
+		this.rightFlag = 0;
+	}
+	
 	public static void heapSort(Integer[] arrayToSort)
 	{
 		MaxHeap h = new MaxHeap(arrayToSort);
 		Integer[] sortedArray = new Integer[arrayToSort.length];
 		
-		for(int i = h.itemsStored - 1; i >= 1; i--)
+		for(int i = h.itemsStored - 1; i >= 0; i--)
 		{
 			sortedArray[i] = h.deleteMax();
 		}
 		
-		System.out.println(h.toString());
+		for(int i = 0; i < sortedArray.length; i++)
+		{
+			System.out.print(sortedArray[i] + " ");
+		}
+		
+		//TODO figure out how they want me to show that the tree has been sorted
 	}
 	
+	public int getSize() {return this.size;}
+	public int getItemsStored() {return this.itemsStored;}
 	
 }
