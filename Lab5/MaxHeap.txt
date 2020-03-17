@@ -112,6 +112,7 @@ public class MaxHeap {
 		}
 		
 		//Return the maximum
+		this.clearFlags();
 		return max;
 	}
 	
@@ -136,9 +137,14 @@ public class MaxHeap {
 			} else {return false;}
 		}
 		
-		//Check which child is larger
-		if(this.tree[getLeft(r)] >= this.tree[getRight(r)])
-		{this.leftFlag = 1; return true;} else {this.rightFlag = 1; return true;}
+		//Only bubble down if there's an option to
+		if(this.tree[r] < this.tree[getLeft(r)] || this.tree[r] < this.tree[getRight(r)])
+		{
+			//Check which child is larger
+			if(this.tree[getLeft(r)] >= this.tree[getRight(r)])
+			{this.leftFlag = 1; return true;} else {this.rightFlag = 1; return true;}
+		}
+		return false;
 	}
 	
 	public void reArrangeTree()
